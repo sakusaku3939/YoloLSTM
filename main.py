@@ -1,6 +1,4 @@
 import torch
-import torch.nn as nn
-import torch.optim as optim
 
 from tqdm import tqdm
 import os
@@ -10,7 +8,7 @@ import random
 import numpy as np
 import ssl
 
-from data.dataset_utils import load_cifar10
+from models.dataset_utils import load_cifar10
 from models.model_utils import get_models
 
 from config import get_config
@@ -40,7 +38,7 @@ def train():
 
     for model, config in get_models():
         os.makedirs(f"outputs/{now}/" + config["name"])
-        wandb.init(project="SampleImageClassification_" + config["name"], config=get_config("wandb"))
+        wandb.init(project="ImageBasedLocalization_" + config["name"], config=get_config("wandb"))
         model = model.to(device)
 
         train_settings = config["train_settings"]
