@@ -8,7 +8,7 @@ import random
 import numpy as np
 import ssl
 
-from models.dataset_utils import load_cifar10
+from models.dataset_utils import load_image
 from models.model_utils import get_models
 
 from config import get_config
@@ -33,7 +33,7 @@ def train():
     else:
         device = torch.device(config_gen["device"])
 
-    trainloader, testloader = load_cifar10()
+    train_loader, test_loader = load_image()
     num_epochs = config_gen["num_epochs"]
 
     for model, config in get_models():
@@ -49,7 +49,8 @@ def train():
             results = ""
             running_loss = 0.0
             print(f"Epoch: {epoch + 1}")
-            for i, data in tqdm(enumerate(trainloader, 0)):
+            for i, data in tqdm(enumerate(train_loader, 0)):
+                # x: torch.Size([5, 3, 128, 128]) y: torch.Size([5])
                 x, y = data
                 x, y = x.to(device), y.to(device)
                 optimizer.zero_grad()
@@ -62,7 +63,7 @@ def train():
             # 各エポック後の処理
             with torch.no_grad():
                 running_score = 0.0
-                for j, data in tqdm(enumerate(testloader, 0)):
+                for j, data in tqdm(enumerate(test_loader, 0)):
                     x, y = data
                     x, y = x.to(device), y.to(device)
                     pred = model(x)

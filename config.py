@@ -1,4 +1,3 @@
-import torch
 import torch.nn as nn
 import torch.optim as optim
 
@@ -8,7 +7,7 @@ c = {
     "general": {
         "num_epochs": 10,
         "random_state": 111,
-        "batch_size": 100,
+        "batch_size": 5,
         "num_workers": 2,
         "device": "cuda",
     },
