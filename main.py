@@ -83,5 +83,29 @@ def train():
         print("Training finished")
 
 
+def predict():
+    torch.multiprocessing.freeze_support()
+    config_gen = get_config("general")
+
+    if config_gen["device"] == "cuda":
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    else:
+        device = torch.device(config_gen["device"])
+
+    train_loader, test_loader = load_image()
+    path = "outputs\\20230618212958\\SimpleCNN\\model.pth"
+
+    for model, config in get_models():
+        model = model.to(device)
+        model.load_state_dict(torch.load(path))
+        for j, data in tqdm(enumerate(test_loader, 0)):
+            x, y = data
+            x, y = x.to(device), y.to(device)
+            pred = model(x)
+            _, output = torch.max(pred.data, 1)
+            print('Predicted: ' + output)
+
+
 if __name__ == "__main__":
     train()
+    # predict()
