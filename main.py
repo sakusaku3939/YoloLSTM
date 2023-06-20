@@ -1,4 +1,6 @@
 import torch
+import torchvision
+import matplotlib.pyplot as plt
 
 from tqdm import tqdm
 import os
@@ -93,19 +95,46 @@ def predict():
         device = torch.device(config_gen["device"])
 
     train_loader, test_loader = load_image()
-    path = "outputs\\20230618212958\\SimpleCNN\\model.pth"
+    path = "outputs\\20230620223054\\SimpleCNN\\model.pth"
+
+    classes = ("0_0", "13_13")
+    class_correct = list(0. for _ in range(2))
+    class_total = list(0. for _ in range(2))
 
     for model, config in get_models():
         model = model.to(device)
         model.load_state_dict(torch.load(path))
-        for j, data in tqdm(enumerate(test_loader, 0)):
-            x, y = data
-            x, y = x.to(device), y.to(device)
-            pred = model(x)
-            _, output = torch.max(pred.data, 1)
-            print('Predicted: ' + output)
+        with torch.no_grad():
+            for data in test_loader:
+                inputs, labels = data[0].to(device), data[1].to(device)
+                outputs = model(inputs)
+                _, pred = torch.max(outputs, 1)
+                c = (pred == labels).squeeze()
+
+                for i in range(2):
+                    label = labels[i]
+                    class_correct[label] += c[i].item()
+                    class_total[label] += 1
+
+                if (pred == labels).sum().item() != labels.size(0):
+                    for i in range(0, len(labels)):
+                        if pred[i] != labels[i]:
+                            images, labels = data
+                            imshow(torchvision.utils.make_grid(images[i]))
+                            print(f'Predicted: {classes[pred[i]]}, Label: {classes[labels[i]]}')
+
+    for i in range(2):
+        print('Accuracy of %5s : %2d %%' % (classes[i], 100 * class_correct[i] / class_total[i]))
+
+
+# 画像の表示関数
+def imshow(img):
+    img = img / 2 + 0.5
+    npimg = img.numpy()
+    plt.imshow(np.transpose(npimg, (1, 2, 0)))
+    plt.show()
 
 
 if __name__ == "__main__":
-    train()
-    # predict()
+    # train()
+    predict()
