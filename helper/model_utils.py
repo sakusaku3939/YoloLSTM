@@ -1,11 +1,11 @@
-from models.CNN import CNN
+from models.SimpleCNN import SimpleCNN
 from config import get_config
 import sys
 
 sys.path.append('../')
 
 models = {
-    "SimpleCNN": CNN,
+    "SimpleCNN": SimpleCNN,
 }
 
 
