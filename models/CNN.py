@@ -2,9 +2,9 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-class SimpleCNN(nn.Module):
+class CNN(nn.Module):
     def __init__(self, param):
-        super(SimpleCNN, self).__init__()
+        super(CNN, self).__init__()
 
         self.param = param
 

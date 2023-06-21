@@ -10,8 +10,8 @@ import random
 import numpy as np
 import ssl
 
-from models.dataset_utils import load_image
-from models.model_utils import get_models
+from helper.dataset_utils import load_image
+from helper.model_utils import get_models
 
 from config import get_config
 
@@ -41,18 +41,19 @@ def train():
         train_settings = config["train_settings"]
         loss_function = train_settings["loss_function"]
         optimizer = train_settings["optimizer"](model.parameters())
+        results = ""
 
         for epoch in range(num_epochs):
-            results = ""
             running_loss = 0.0
+            i = 0
             print(f"Epoch: {epoch + 1}")
+
             for i, data in tqdm(enumerate(train_loader, 0)):
-                # x: torch.Size([5, 3, 128, 128]) y: torch.Size([5])
-                x, y = data
-                x, y = x.to(device), y.to(device)
+                # inputs: torch.Size([5, 3, 128, 128]) labels: torch.Size([5])
+                inputs, labels = data[0].to(device), data[1].to(device)
                 optimizer.zero_grad()
-                outputs = model(x)
-                loss = loss_function(outputs, y)
+                outputs = model(inputs)
+                loss = loss_function(outputs, labels)
                 loss.backward()
                 optimizer.step()
                 running_loss += loss.item()
@@ -61,14 +62,14 @@ def train():
             with torch.no_grad():
                 running_score = 0.0
                 for j, data in tqdm(enumerate(test_loader, 0)):
-                    x, y = data
-                    x, y = x.to(device), y.to(device)
-                    pred = model(x)
-                    running_score += config["train_settings"]["eval_function"](pred, y)
+                    inputs, labels = data[0].to(device), data[1].to(device)
+                    pred = model(inputs)
+                    running_score += config["train_settings"]["eval_function"](pred, labels)
+
             epoch_loss, epoch_score = running_loss / (i + 1), running_score / (j + 1)
             wandb.log({"Loss": epoch_loss, "Score": epoch_score})
             result = f"Loss: {epoch_loss}  Score: {epoch_score}\n"
-            results += ("Epoch:" + str(epoch + 1) + "  " + result)
+            results += ("Epoch:" + str(epoch + 1) + "  " + f"Loss: {epoch_loss}  Score: {epoch_score}\n")
             print(result)
 
         # モデル学習完了後の処理
@@ -99,9 +100,9 @@ def predict():
             for data in test_loader:
                 inputs, labels = data[0].to(device), data[1].to(device)
                 outputs = model(inputs)
-                _, pred = torch.max(outputs, 1)
 
                 # 正解数をカウントする
+                _, pred = torch.max(outputs, 1)
                 c = (pred == labels).squeeze()
                 for i in range(2):
                     label = labels[i]
@@ -139,5 +140,5 @@ def show_img(img):
 
 
 if __name__ == "__main__":
-    # train()
-    predict()
+    train()
+    # predict()
