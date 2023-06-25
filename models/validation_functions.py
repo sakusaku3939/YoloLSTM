@@ -5,8 +5,8 @@ import torch
 def get_classification_accuracy(pred, labels):
     total = 0
     correct = 0
-    # 各行の最大値を抽出して1次元に減らす
-    _, pred = torch.max(pred.data, 1)
+    # 各行から最大値を選んで、最大値のindexを格納する
+    _, pred = torch.max(pred.data, dim=1)
     # Tensorの0次元目のサイズを取得
     total += labels.size(0)
     # sum()で True の合計値を算出し、item()で numpy.int64 から int型 の数値に変換
