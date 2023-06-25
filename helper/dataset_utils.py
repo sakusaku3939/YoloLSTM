@@ -18,7 +18,7 @@ def load_image():
     ])
 
     # データセットの読み込み
-    dataset = torchvision.datasets.ImageFolder("./data", transform)
+    dataset = torchvision.datasets.ImageFolder("./data/train", transform)
 
     # 割合から個数を出す
     train_ratio = 60
@@ -44,45 +44,24 @@ def load_image():
     return train_loader, test_loader
 
 
-# CIFAR10データセットをロードする関数 -> (trainloader, testloader)
-def load_cifar10():
+def load_test_image():
     batch_size = get_config("general", "batch_size")
     num_workers = get_config("general", "num_workers")
 
     # データの前処理
     transform = transforms.Compose([
-        transforms.RandomHorizontalFlip(),
-        transforms.RandomCrop(32, padding=4),
-        transforms.ToTensor(),
-        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+        transforms.Resize((128, 128)),
+        transforms.ToTensor()
     ])
 
-    # 訓練データセット
-    trainset = torchvision.datasets.CIFAR10(
-        root='./data',
-        train=True,
-        download=True,
-        transform=transform
-    )
-    trainloader = torch.utils.data.DataLoader(
-        trainset,
-        batch_size=batch_size,
-        shuffle=True,
-        num_workers=num_workers
-    )
+    # データセットの読み込み
+    dataset = torchvision.datasets.ImageFolder("./data/test", transform)
 
-    # テストデータセット
-    testset = torchvision.datasets.CIFAR10(
-        root='./data',
-        train=False,
-        download=True,
-        transform=transform
-    )
-    testloader = torch.utils.data.DataLoader(
-        testset,
+    test_loader = torch.utils.data.DataLoader(
+        dataset,
         batch_size=batch_size,
         shuffle=False,
         num_workers=num_workers
     )
 
-    return trainloader, testloader
+    return test_loader

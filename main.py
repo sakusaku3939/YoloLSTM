@@ -10,7 +10,7 @@ import random
 import numpy as np
 import ssl
 
-from helper.dataset_utils import load_image
+from helper.dataset_utils import load_image, load_test_image
 from helper.model_utils import get_models
 
 from config import get_config
@@ -86,10 +86,10 @@ def predict():
     config_gen = get_config("general")
     device = init_device(config_gen)
 
-    train_loader, test_loader = load_image()
-    path = "outputs\\20230620223054\\SimpleCNN\\model.pth"
+    test_loader = load_test_image()
+    path = "outputs\\20230625181108\\SimpleCNN\\model.pth"
 
-    classes = ("0_0", "13_13")
+    classes = ("0_0", "12_12")
     class_correct = list(0. for _ in range(2))
     class_total = list(0. for _ in range(2))
 
