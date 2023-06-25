@@ -23,6 +23,16 @@ np.random.seed(random_state)
 torch.manual_seed(random_state)
 
 
+# GPUデバイスの設定
+def init_device(config_gen):
+    torch.multiprocessing.freeze_support()
+    if config_gen["device"] == "cuda":
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    else:
+        device = torch.device(config_gen["device"])
+    return device
+
+
 def train():
     now = datetime.now().strftime("%Y%m%d%H%M%S")
     os.makedirs(f"outputs/{now}")
@@ -44,6 +54,7 @@ def train():
         results = ""
 
         for epoch in range(num_epochs):
+            model = model.train()
             running_loss = 0.0
             i = 0
             print(f"Epoch: {epoch + 1}")
@@ -60,7 +71,9 @@ def train():
 
             # 各エポック後の処理
             with torch.no_grad():
+                model = model.eval()
                 running_score = 0.0
+
                 for j, data in tqdm(enumerate(test_loader, 0)):
                     inputs, labels = data[0].to(device), data[1].to(device)
                     pred = model(inputs)
@@ -87,7 +100,7 @@ def predict():
     device = init_device(config_gen)
 
     test_loader = load_test_image()
-    path = "outputs\\20230625181108\\SimpleCNN\\model.pth"
+    path = "outputs\\20230625194359\\SimpleCNN\\model.pth"
 
     classes = ("0_0", "12_12")
     class_correct = list(0. for _ in range(2))
@@ -95,7 +108,9 @@ def predict():
 
     for model, config in get_models():
         model = model.to(device)
+        model = model.eval()
         model.load_state_dict(torch.load(path))
+
         with torch.no_grad():
             for data in test_loader:
                 inputs, labels = data[0].to(device), data[1].to(device)
@@ -103,11 +118,10 @@ def predict():
 
                 # 正解数をカウントする
                 _, pred = torch.max(outputs, 1)
-                c = (pred == labels).squeeze()
                 for i in range(2):
                     label = labels[i]
-                    class_correct[label] += c[i].item()
-                    class_total[label] += 1
+                    class_correct[label] += (pred == labels).sum().item()
+                    class_total[label] += test_loader.batch_size
 
                 # 分類に失敗した画像を表示する
                 if (pred == labels).sum().item() != labels.size(0):
@@ -117,18 +131,9 @@ def predict():
                             show_img(torchvision.utils.make_grid(images[i]))
                             print(f'Predicted: {classes[pred[i]]}, Label: {classes[labels[i]]}')
 
+    print()
     for i in range(2):
         print('Accuracy of %5s : %2d %%' % (classes[i], 100 * class_correct[i] / class_total[i]))
-
-
-# GPUデバイスの設定
-def init_device(config_gen):
-    torch.multiprocessing.freeze_support()
-    if config_gen["device"] == "cuda":
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    else:
-        device = torch.device(config_gen["device"])
-    return device
 
 
 # 画像の表示関数
@@ -140,5 +145,5 @@ def show_img(img):
 
 
 if __name__ == "__main__":
-    train()
-    # predict()
+    # train()
+    predict()
