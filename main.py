@@ -102,7 +102,7 @@ def predict():
     test_loader = load_test_image()
     path = "outputs\\20230628221102\\SimpleCNN\\model.pth"
 
-    classes = ("0_0", "12_12")
+    classes = ("0_0", "13_12")
     class_correct = list(0. for _ in range(2))
     class_total = list(0. for _ in range(2))
 
