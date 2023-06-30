@@ -60,7 +60,6 @@ def train():
             print(f"Epoch: {epoch + 1}")
 
             for i, data in tqdm(enumerate(train_loader, 0)):
-                # inputs: torch.Size([5, 3, 128, 128]) labels: torch.Size([5])
                 inputs, labels = data[0].to(device), data[1].to(device)
                 optimizer.zero_grad()
                 outputs = model(inputs)
@@ -145,5 +144,5 @@ def show_img(img):
 
 
 if __name__ == "__main__":
-    # train()
-    predict()
+    train()
+    # predict()

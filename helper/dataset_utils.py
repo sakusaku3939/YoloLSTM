@@ -4,6 +4,8 @@ import torchvision.transforms as transforms
 from config import get_config
 import sys
 
+from helper.image_dataset import ImageDataset
+
 sys.path.append('../')
 
 
@@ -18,7 +20,7 @@ def load_image():
     ])
 
     # データセットの読み込み
-    dataset = torchvision.datasets.ImageFolder("./data/train", transform)
+    dataset = ImageDataset(transform)
 
     # 割合から個数を出す
     train_ratio = 60

@@ -1,11 +1,11 @@
 import torch.nn as nn
 import torch.optim as optim
 
-from models.validation_functions import get_classification_accuracy
+from models.validation_functions import get_r2_accuracy
 
 c = {
     "general": {
-        "num_epochs": 10,
+        "num_epochs": 1,
         "random_state": 111,
         "batch_size": 5,
         "num_workers": 2,
@@ -19,9 +19,9 @@ c = {
             "name": "SimpleCNN",
             "state": True,
             "train_settings": {
-                "loss_function": nn.CrossEntropyLoss(),
+                "loss_function": nn.MSELoss(),
                 "optimizer": optim.Adam,
-                "eval_function": get_classification_accuracy,
+                "eval_function": get_r2_accuracy,
             },
             "param": {},
         },

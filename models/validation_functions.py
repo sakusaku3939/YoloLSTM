@@ -1,7 +1,13 @@
 import torch
+from torchmetrics.functional import r2_score
 
 
 # 検証用関数 pred: 推測値, labels: 正解データ
+def get_r2_accuracy(pred, labels):
+    # TODO r2スコアを算出
+    return 0  # r2_score(pred, labels)
+
+
 def get_classification_accuracy(pred, labels):
     total = 0
     correct = 0
