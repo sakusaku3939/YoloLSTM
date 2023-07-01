@@ -3,12 +3,14 @@ from torch.utils.data import Dataset
 from PIL import Image
 import csv
 
+path = "./data/train/0627/"
+
 
 class ImageDataset(Dataset):
     def __init__(self, transform) -> None:
         super().__init__()
         # CSVファイルから画像パスと正解データに分割
-        with open("./data/0627/label.csv") as f:
+        with open(path + "label.csv") as f:
             csv_data = csv.reader(f)
             data = [line for line in csv_data]
             image_paths = [line[0] for line in data]
@@ -19,15 +21,14 @@ class ImageDataset(Dataset):
         self.transform = transform
 
     def __getitem__(self, index):
-        path = self.image_paths[index]
-        img = Image.open("./data/0627/" + path)
+        image_path = self.image_paths[index]
+        img = Image.open(path + image_path)
 
         # 画像を前処理
         if self.transform is not None:
             img = self.transform(img)
 
         label = self.labels[index]
-        image_path = self.image_paths[index]
         return img, label, image_path
 
     def __len__(self):

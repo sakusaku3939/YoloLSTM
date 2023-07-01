@@ -1,7 +1,7 @@
 import os
 import csv
 
-path = "./data/0627"
+path = "./data/train/0627/"
 
 # X * y = 13 * 12
 # 推定で使用する座標を、撮影する順番（右下から左上）に記録
@@ -19,6 +19,6 @@ for y_list in pos_list:
     x += 1
 
 # CSVに書き込み
-with open(path + "/label.csv", 'w', newline='') as file:
+with open(path + "label.csv", 'w', newline='') as file:
     writer = csv.writer(file)
     writer.writerows(outputs)
