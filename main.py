@@ -10,6 +10,7 @@ import random
 import numpy as np
 import ssl
 
+from helper.crop_utils import crop_dataset
 from helper.dataset_utils import load_image, load_test_image
 from helper.model_utils import get_models
 
@@ -146,6 +147,9 @@ def show_img(img):
 
 
 if __name__ == "__main__":
+    # crop_dataset("./data/train/0_0")
+    # crop_dataset("./data/train/13_12")
+
     # train()
     # predict()
 
