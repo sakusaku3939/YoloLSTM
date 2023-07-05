@@ -10,7 +10,6 @@ import random
 import numpy as np
 import ssl
 
-from helper.crop_utils import crop_dataset
 from helper.dataset_utils import load_image, load_test_image
 from helper.model_utils import get_models
 
@@ -147,27 +146,24 @@ def show_img(img):
 
 
 if __name__ == "__main__":
-    # crop_dataset("./data/train/0_0")
-    # crop_dataset("./data/train/13_12")
-
-    # train()
+    train()
     # predict()
 
-    # ダミーデータの生成
-    batch_size = 4
-    num_images = 6
-    channels = 3
-    height = 64
-    width = 64
-
-    dummy_input = torch.randn(batch_size, num_images, channels, height, width)
-    print(dummy_input.shape)
-
-    # モデルの初期化
-    model = CNNLSTM()
-
-    # 出力の計算
-    output = model(dummy_input)
-
-    # 出力の形状を確認
-    print(output.shape)
+    # # ダミーデータの生成
+    # batch_size = 4
+    # num_images = 6
+    # channels = 3
+    # height = 64
+    # width = 64
+    #
+    # dummy_input = torch.randn(batch_size, num_images, channels, height, width)
+    # print(dummy_input.shape)
+    #
+    # # モデルの初期化
+    # model = CNNLSTM()
+    #
+    # # 出力の計算
+    # output = model(dummy_input)
+    #
+    # # 出力の形状を確認
+    # print(output.shape)
