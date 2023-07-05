@@ -35,7 +35,7 @@ class CropDataset(Dataset):
             img = self.transform(img)
 
         label = self.dataset[index]["label"]
-        return img, label, file_path
+        return img, label
 
     def __len__(self):
         return len(self.dataset)

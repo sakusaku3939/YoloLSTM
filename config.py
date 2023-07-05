@@ -5,7 +5,7 @@ from models.validation_functions import get_classification_accuracy
 
 c = {
     "general": {
-        "num_epochs": 10,
+        "num_epochs": 1,
         "random_state": 111,
         "batch_size": 5,
         "num_workers": 2,
@@ -15,8 +15,8 @@ c = {
 
     },
     "models": {
-        "SimpleCNN": {
-            "name": "SimpleCNN",
+        "CNNLSTM": {
+            "name": "CNNLSTM",
             "state": True,
             "train_settings": {
                 "loss_function": nn.CrossEntropyLoss(),

@@ -3,8 +3,11 @@ import torch.nn as nn
 
 # モデルの定義
 class CNNLSTM(nn.Module):
-    def __init__(self):
+    def __init__(self, param):
         super(CNNLSTM, self).__init__()
+
+        self.param = param
+
         self.cnn = nn.Sequential(
             nn.Conv2d(3, 16, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
@@ -17,11 +20,11 @@ class CNNLSTM(nn.Module):
         self.fc = nn.Linear(64, 2)
 
     def forward(self, x):
-        batch_size, num_images, channels, height, width = x.size()
+        batch_size, channels, height, width = x.size()
         # 画像データの処理
-        x = x.view(batch_size * num_images, channels, height, width)
+        x = x.view(batch_size, channels, height, width)
         x = self.cnn(x)
-        x = x.view(batch_size, num_images, -1)
+        x = x.view(batch_size, -1)
         # LSTM処理
         _, (h_n, _) = self.lstm(x)
         # 最後のLSTM層の出力を取得
