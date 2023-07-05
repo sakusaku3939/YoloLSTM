@@ -26,7 +26,7 @@ def load_image():
     train_loader = torch.utils.data.DataLoader(
         train_set,
         batch_size=batch_size,
-        shuffle=True,
+        shuffle=False,
         num_workers=num_workers
     )
     test_loader = torch.utils.data.DataLoader(

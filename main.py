@@ -61,13 +61,14 @@ def train():
             print(f"Epoch: {epoch + 1}")
 
             for i, data in tqdm(enumerate(train_loader, 0)):
-                # inputs: torch.Size([5, 3, 128, 128]) labels: torch.Size([5])
                 inputs, labels = data[0].to(device), data[1].to(device)
                 optimizer.zero_grad()
                 outputs = model(inputs)
-                loss = loss_function(outputs, labels)
+
+                loss = loss_function(outputs, labels[0])
                 loss.backward()
                 optimizer.step()
+
                 running_loss += loss.item()
 
             # 各エポック後の処理
@@ -78,7 +79,7 @@ def train():
                 for j, data in tqdm(enumerate(test_loader, 0)):
                     inputs, labels = data[0].to(device), data[1].to(device)
                     pred = model(inputs)
-                    running_score += config["train_settings"]["eval_function"](pred, labels)
+                    running_score += config["train_settings"]["eval_function"](pred, labels[0])
 
             epoch_loss, epoch_score = running_loss / (i + 1), running_score / (j + 1)
             wandb.log({"Loss": epoch_loss, "Score": epoch_score})
