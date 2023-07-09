@@ -18,15 +18,8 @@ def load_image():
     ])
 
     # データセットの読み込み
-    dataset = torchvision.datasets.ImageFolder("./data/train", transform)
-
-    # 割合から個数を出す
-    train_ratio = 60
-    train_set = int(len(dataset) * train_ratio / 100)
-    test_set = int(len(dataset) - train_set)
-
-    # 学習データと検証データに分割
-    train_set, test_set = torch.utils.data.random_split(dataset, [train_set, test_set])
+    train_set = torchvision.datasets.ImageFolder("./data/train", transform)
+    test_set = torchvision.datasets.ImageFolder("./data/test", transform)
 
     train_loader = torch.utils.data.DataLoader(
         train_set,
