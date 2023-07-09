@@ -67,10 +67,6 @@ def collate_fn(batch_list):
 
     # batchリストを1つのTensorにまとめる
     images = [torch.stack(batch) for batch in images_list]
-    labels = torch.tensor(label_list, dtype=torch.float)
-
-    # print("images_list: " + str(len(images_list)) + "/" + str(len(images_list[0])))
-    # print("images: " + str(len(images)) + "/" + str(len(images[0])))
-    # print("labels: " + str(len(label_list)))
+    labels = torch.tensor(label_list)
 
     return images, labels

@@ -18,7 +18,7 @@ class CNNLSTM(nn.Module):
             nn.MaxPool2d(kernel_size=2, stride=2)
         )
         self.lstm = nn.LSTM(input_size=8192, hidden_size=64, num_layers=2, batch_first=True)
-        self.fc = nn.Linear(64, 1)
+        self.fc = nn.Linear(64, 2)
 
     def forward(self, inputs):
         outputs = []
@@ -34,11 +34,9 @@ class CNNLSTM(nn.Module):
             _, (h_n, _) = self.lstm(x)
             x = h_n[-1]
 
-            # LSTM層の出力から位置を推定
+            # LSTM層の出力から2値に分類
             x = self.fc(x)
             outputs.append(x)
 
-        print(outputs[0].dtype)
-        outputs = torch.cat(outputs)
-        print(outputs)
+        outputs = torch.stack(outputs)
         return outputs

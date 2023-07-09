@@ -64,8 +64,6 @@ def train():
                 optimizer.zero_grad()
                 outputs = model(inputs)
 
-                print(outputs.shape)
-                print(labels.shape)
                 loss = loss_function(outputs, labels)
                 loss.backward()
                 optimizer.step()
