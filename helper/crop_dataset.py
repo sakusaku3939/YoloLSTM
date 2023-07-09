@@ -1,5 +1,6 @@
 import glob
 import os
+import torch
 from torch.utils.data import Dataset
 from PIL import Image
 from tqdm import tqdm
@@ -59,3 +60,17 @@ def crop_images(input_path, output_path):
         name = os.path.splitext(f_name)[0]
         model(f"{input_path}/{f_name}", project=output_path, name=name, save_crop=True, conf=0.1)
 
+
+def collate_fn(batch_list):
+    images_list = [data[0] for data in batch_list]
+    label_list = [data[1] for data in batch_list]
+
+    # batchリストを1つのTensorにまとめる
+    images = [torch.stack(batch) for batch in images_list]
+    labels = torch.tensor(label_list, dtype=torch.float)
+
+    # print("images_list: " + str(len(images_list)) + "/" + str(len(images_list[0])))
+    # print("images: " + str(len(images)) + "/" + str(len(images[0])))
+    # print("labels: " + str(len(label_list)))
+
+    return images, labels

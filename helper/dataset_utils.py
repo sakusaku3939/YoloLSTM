@@ -4,7 +4,7 @@ import torchvision.transforms as transforms
 from config import get_config
 import sys
 
-from helper.crop_dataset import CropDataset
+from helper.crop_dataset import CropDataset, collate_fn
 
 sys.path.append('../')
 
@@ -26,14 +26,16 @@ def load_image():
     train_loader = torch.utils.data.DataLoader(
         train_set,
         batch_size=batch_size,
-        shuffle=False,
-        num_workers=num_workers
+        shuffle=True,
+        num_workers=num_workers,
+        collate_fn=collate_fn
     )
     test_loader = torch.utils.data.DataLoader(
         test_set,
         batch_size=batch_size,
-        shuffle=False,
-        num_workers=num_workers
+        shuffle=True,
+        num_workers=num_workers,
+        collate_fn=collate_fn
     )
 
     return train_loader, test_loader

@@ -14,7 +14,6 @@ from helper.dataset_utils import load_image, load_test_image
 from helper.model_utils import get_models
 
 from config import get_config
-from models.CNNLSTM import CNNLSTM
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
@@ -61,11 +60,13 @@ def train():
             print(f"Epoch: {epoch + 1}")
 
             for i, data in tqdm(enumerate(train_loader, 0)):
-                inputs, labels = data[0].to(device), data[1].to(device)
+                inputs, labels = [d.to(device) for d in data[0]], data[1].to(device)
                 optimizer.zero_grad()
                 outputs = model(inputs)
 
-                loss = loss_function(outputs, labels[0])
+                print(outputs.shape)
+                print(labels.shape)
+                loss = loss_function(outputs, labels)
                 loss.backward()
                 optimizer.step()
 
@@ -77,9 +78,9 @@ def train():
                 running_score = 0.0
 
                 for j, data in tqdm(enumerate(test_loader, 0)):
-                    inputs, labels = data[0].to(device), data[1].to(device)
+                    inputs, labels = [d.to(device) for d in data[0]], data[1].to(device)
                     pred = model(inputs)
-                    running_score += config["train_settings"]["eval_function"](pred, labels[0])
+                    running_score += config["train_settings"]["eval_function"](pred, labels)
 
             epoch_loss, epoch_score = running_loss / (i + 1), running_score / (j + 1)
             wandb.log({"Loss": epoch_loss, "Score": epoch_score})
