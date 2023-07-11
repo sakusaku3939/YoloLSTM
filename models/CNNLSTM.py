@@ -21,7 +21,7 @@ class CNNLSTM(nn.Module):
         self.fc = nn.Linear(64, 2)
 
     def forward(self, inputs):
-        outputs = []
+        crops = []
         for x in inputs:
             batch_size, channels, height, width = x.size()
 
@@ -29,14 +29,14 @@ class CNNLSTM(nn.Module):
             x = x.view(batch_size, channels, height, width)
             x = self.cnn(x)
             x = x.view(batch_size, -1)
+            crops.append(x)
 
-            # LSTM処理をして最後の出力を取得
-            _, (h_n, _) = self.lstm(x)
-            x = h_n[-1]
+        crops = torch.stack(crops)
 
-            # LSTM層の出力から2値に分類
-            x = self.fc(x)
-            outputs.append(x)
+        # LSTM処理をして最後の出力を取得
+        _, (h_n, _) = self.lstm(crops)
+        x = h_n[-1]
 
-        outputs = torch.stack(outputs)
-        return outputs
+        # LSTM層の出力から2値に分類
+        x = self.fc(x)
+        return x
