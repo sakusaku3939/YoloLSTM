@@ -21,7 +21,7 @@ def load_image():
 
     # データセットの読み込み
     train_set = CropDataset("data/train", transform)
-    test_set = CropDataset("data/test", transform)
+    valid_set = CropDataset("data/valid", transform)
 
     train_loader = torch.utils.data.DataLoader(
         train_set,
@@ -30,15 +30,15 @@ def load_image():
         num_workers=num_workers,
         collate_fn=collate_fn
     )
-    test_loader = torch.utils.data.DataLoader(
-        test_set,
+    valid_loader = torch.utils.data.DataLoader(
+        valid_set,
         batch_size=batch_size,
         shuffle=True,
         num_workers=num_workers,
         collate_fn=collate_fn
     )
 
-    return train_loader, test_loader
+    return train_loader, valid_loader
 
 
 def load_test_image():
