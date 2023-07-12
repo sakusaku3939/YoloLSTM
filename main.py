@@ -42,10 +42,12 @@ def train():
     train_loader, test_loader = load_image()
 
     num_epochs = config_gen["num_epochs"]
+    config_wandb = get_config("wandb")
 
     for model, config in get_models():
         os.makedirs(f"outputs/{now}/" + config["name"])
-        wandb.init(project="ImageBasedLocalization_" + config["name"], config=get_config("wandb"))
+        wandb.init(project="ImageBasedLocalization_" + config["name"], config=config_wandb["config"],
+                   mode="online" if config_wandb["state"] else "disabled")
         model = model.to(device)
 
         train_settings = config["train_settings"]

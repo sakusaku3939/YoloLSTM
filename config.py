@@ -11,9 +11,7 @@ c = {
         "num_workers": 2,
         "device": "cuda",
     },
-    "data": {
-
-    },
+    "data": {},
     "models": {
         "CNNLSTM": {
             "name": "CNNLSTM",
@@ -27,10 +25,12 @@ c = {
         },
     },
     "wandb": {
-        "learning_rate": 0.02,
-        "architecture": "CNN",
-        "dataset": "CIFAR-100",
-        "epochs": 10,
+        "state": False,
+        "config": {
+            "learning_rate": 0.02,
+            "architecture": "CNN",
+            "epochs": 10,
+        }
     },
 }
 
