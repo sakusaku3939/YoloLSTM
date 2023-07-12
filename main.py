@@ -39,7 +39,7 @@ def train():
 
     config_gen = get_config("general")
     device = init_device(config_gen)
-    train_loader, test_loader = load_image()
+    train_loader, valid_loader = load_image()
 
     num_epochs = config_gen["num_epochs"]
 
@@ -69,12 +69,12 @@ def train():
                 optimizer.step()
                 running_loss += loss.item()
 
-            # 各エポック後の処理
+            # 各エポック後の検証
             with torch.no_grad():
                 model = model.eval()
                 running_score = 0.0
 
-                for j, data in tqdm(enumerate(test_loader, 0)):
+                for j, data in tqdm(enumerate(valid_loader, 0)):
                     inputs, labels = data[0].to(device), data[1].to(device)
                     pred = model(inputs)
                     running_score += config["train_settings"]["eval_function"](pred, labels)
