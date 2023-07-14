@@ -100,7 +100,7 @@ def predict():
     device = init_device(config_gen)
 
     test_loader = load_test_image()
-    path = "outputs\\20230628221102\\SimpleCNN\\model.pth"
+    path = "outputs\\20230713001346\\SimpleCNN\\model.pth"
 
     classes = ("0_0", "13_12")
     class_correct = list(0. for _ in range(2))
