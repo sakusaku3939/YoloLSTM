@@ -103,7 +103,7 @@ def predict():
     device = init_device(config_gen)
 
     test_loader = load_test_image()
-    path = "outputs\\20230628221102\\SimpleCNN\\model.pth"
+    path = "outputs\\20230713003050\\CNNLSTM\\model.pth"
 
     classes = ("0_0", "13_12")
     class_correct = list(0. for _ in range(2))
@@ -116,11 +116,12 @@ def predict():
 
         with torch.no_grad():
             for data in test_loader:
-                inputs, labels = data[0].to(device), data[1].to(device)
-                outputs = model(inputs)
+                inputs, labels = [d.to(device) for d in data[0]], data[1].to(device)
+                pred = model(inputs)
 
                 # 正解数をカウントする
-                _, pred = torch.max(outputs, 1)
+                _, pred = torch.max(pred.data, dim=1)
+
                 for i in range(2):
                     label = labels[i]
                     class_correct[label] += (pred == labels).sum().item()

@@ -47,18 +47,19 @@ def load_test_image():
 
     # データの前処理
     transform = transforms.Compose([
-        transforms.Resize((128, 128)),
+        transforms.Resize((64, 64)),
         transforms.ToTensor()
     ])
 
     # データセットの読み込み
-    dataset = torchvision.datasets.ImageFolder("./data/test", transform)
+    dataset = CropDataset("data/test", transform)
 
     test_loader = torch.utils.data.DataLoader(
         dataset,
         batch_size=batch_size,
         shuffle=False,
-        num_workers=num_workers
+        num_workers=num_workers,
+        collate_fn=collate_fn
     )
 
     return test_loader
