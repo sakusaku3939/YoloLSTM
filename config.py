@@ -5,7 +5,7 @@ from models.validation_functions import get_classification_accuracy
 
 c = {
     "general": {
-        "num_epochs": 10,
+        "num_epochs": 12,
         "random_state": 111,
         "batch_size": 5,
         "num_workers": 2,
@@ -30,7 +30,7 @@ c = {
         "learning_rate": 0.02,
         "architecture": "CNN",
         "dataset": "CIFAR-100",
-        "epochs": 10,
+        "epochs": 12,
     },
 }
 
