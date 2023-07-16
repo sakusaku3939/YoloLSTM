@@ -53,7 +53,7 @@ class CropDataset(Dataset):
 
 
 def crop_images(input_path, output_path):
-    model = YOLO("yolov8n.pt")
+    model = YOLO("yolov8x.pt")
     file_names = sorted(os.listdir(input_path))
 
     for f_name in tqdm(file_names):

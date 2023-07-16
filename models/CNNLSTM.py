@@ -18,7 +18,7 @@ class CNNLSTM(nn.Module):
             nn.MaxPool2d(kernel_size=2, stride=2)
         )
         self.lstm = nn.LSTM(input_size=8192, hidden_size=64, num_layers=2, batch_first=True)
-        self.fc = nn.Linear(64, 2)
+        self.fc = nn.Linear(64, 6)
 
     def forward(self, batch_i):
         batch_o = []
@@ -34,7 +34,7 @@ class CNNLSTM(nn.Module):
             _, (h_n, _) = self.lstm(x)
             x = h_n[-1]
 
-            # LSTM層の出力から2値に分類
+            # LSTM層の出力から分類
             x = self.fc(x)
             batch_o.append(x)
 

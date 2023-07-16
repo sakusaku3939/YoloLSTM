@@ -103,11 +103,11 @@ def predict():
     device = init_device(config_gen)
 
     test_loader = load_test_image()
-    path = "outputs\\20230713003050\\CNNLSTM\\model.pth"
+    path = "outputs\\20230716193251\\CNNLSTM\\model.pth"
 
-    classes = ("0_0", "13_12")
-    class_correct = list(0. for _ in range(2))
-    class_total = list(0. for _ in range(2))
+    classes = ("0_0", "0_12", "9_0", "9_12", "13_0", "13_12")
+    class_correct = list(0. for _ in range(len(classes)))
+    class_total = list(0. for _ in range(len(classes)))
 
     for model, config in get_models():
         model = model.to(device)
@@ -122,7 +122,7 @@ def predict():
                 # 正解数をカウントする
                 _, pred = torch.max(pred.data, dim=1)
 
-                for i in range(2):
+                for i in range(len(labels)):
                     label = labels[i]
                     class_correct[label] += (pred == labels).sum().item()
                     class_total[label] += test_loader.batch_size
@@ -136,7 +136,7 @@ def predict():
                             print(f'Predicted: {classes[pred[i]]}, Label: {classes[labels[i]]}')
 
     print()
-    for i in range(2):
+    for i in range(len(classes)):
         print('Accuracy of %5s : %2d %%' % (classes[i], 100 * class_correct[i] / class_total[i]))
 
 
