@@ -104,7 +104,7 @@ def predict():
     device = init_device(config_gen)
 
     test_loader = load_test_image()
-    path = "outputs\\20230716193251\\CNNLSTM\\model.pth"
+    path = "outputs\\20230717225321\\CNNLSTM\\model.pth"
 
     classes = ["0_0", "1_11", "9_0", "9_12", "13_0", "13_12"]
     class_correct = list(0. for _ in range(len(classes)))
@@ -156,5 +156,5 @@ def show_img(img):
 
 
 if __name__ == "__main__":
-    # train()
-    predict()
+    train()
+    # predict()
