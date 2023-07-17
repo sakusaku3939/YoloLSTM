@@ -103,7 +103,7 @@ def predict():
     test_loader = load_test_image()
     path = "outputs\\20230716210612\\SimpleCNN\\model.pth"
 
-    classes = ["0_0", "0_12", "9_0", "9_12", "13_0", "13_12"]
+    classes = ["0_0", "1_11", "9_0", "9_12", "13_0", "13_12"]
     class_correct = list(0. for _ in range(len(classes)))
     class_total = list(0. for _ in range(len(classes)))
 
@@ -137,7 +137,7 @@ def predict():
                             # show_img(torchvision.utils.make_grid(images[i]))
                             print(f'Predicted: {classes[pred[i]]}, Label: {classes[labels[i]]}')
 
-    show_confusion_matrix(y_pred, y_true)
+    show_confusion_matrix(y_pred, y_true, classes)
     print()
     for i in range(len(classes)):
         print('Accuracy of %5s : %2d %%' % (classes[i], 100 * class_correct[i] / class_total[i]))
@@ -152,5 +152,5 @@ def show_img(img):
 
 
 if __name__ == "__main__":
-    train()
-    # predict()
+    # train()
+    predict()
