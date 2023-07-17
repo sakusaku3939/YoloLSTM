@@ -10,6 +10,7 @@ import random
 import numpy as np
 import ssl
 
+from helper.confusion_matrix import show_confusion_matrix
 from helper.dataset_utils import load_image, load_test_image
 from helper.model_utils import get_models
 
@@ -105,9 +106,12 @@ def predict():
     test_loader = load_test_image()
     path = "outputs\\20230716193251\\CNNLSTM\\model.pth"
 
-    classes = ("0_0", "0_12", "9_0", "9_12", "13_0", "13_12")
+    classes = ["0_0", "0_12", "9_0", "9_12", "13_0", "13_12"]
     class_correct = list(0. for _ in range(len(classes)))
     class_total = list(0. for _ in range(len(classes)))
+
+    y_pred = []
+    y_true = []
 
     for model, config in get_models():
         model = model.to(device)
@@ -126,15 +130,18 @@ def predict():
                     label = labels[i]
                     class_correct[label] += (pred == labels).sum().item()
                     class_total[label] += test_loader.batch_size
+                    y_pred.append(pred[i].item())
+                    y_true.append(label.item())
 
                 # 分類に失敗した画像を表示する
                 if (pred == labels).sum().item() != labels.size(0):
-                    for i in range(0, len(labels)):
+                    for i in range(len(labels)):
                         if pred[i] != labels[i]:
                             images, labels = data
-                            show_img(torchvision.utils.make_grid(images[i]))
+                            # show_img(torchvision.utils.make_grid(images[i]))
                             print(f'Predicted: {classes[pred[i]]}, Label: {classes[labels[i]]}')
 
+    show_confusion_matrix(y_pred, y_true)
     print()
     for i in range(len(classes)):
         print('Accuracy of %5s : %2d %%' % (classes[i], 100 * class_correct[i] / class_total[i]))
