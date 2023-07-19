@@ -27,10 +27,12 @@ c = {
         },
     },
     "wandb": {
-        "learning_rate": 0.02,
-        "architecture": "CNN",
-        "dataset": "CIFAR-100",
-        "epochs": 12,
+        "state": True,
+        "project": "ImageBasedLocalization_Classify",
+        "config": {
+            "learning_rate": 0.02,
+            "epochs": 12,
+        }
     },
 }
 
