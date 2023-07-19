@@ -84,7 +84,7 @@ def train():
                     running_score += config["train_settings"]["eval_function"](pred, labels)
 
             epoch_loss, epoch_score = running_loss / (i + 1), running_score / (j + 1)
-            wandb.log({"Loss": epoch_loss, "Score": epoch_score})
+            wandb.log({"Epoch": epoch + 1, "Loss": epoch_loss, "Score": epoch_score})
             result = f"Loss: {epoch_loss}  Score: {epoch_score}\n"
             results += ("Epoch:" + str(epoch + 1) + "  " + f"Loss: {epoch_loss}  Score: {epoch_score}\n")
             print(result)
