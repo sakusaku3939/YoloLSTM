@@ -13,8 +13,8 @@ c = {
     },
     "data": {},
     "models": {
-        "CNNLSTM": {
-            "name": "CNNLSTM",
+        "YoloLSTM": {
+            "name": "YoloLSTM",
             "state": True,
             "train_settings": {
                 "loss_function": nn.CrossEntropyLoss(),
@@ -26,9 +26,9 @@ c = {
     },
     "wandb": {
         "state": False,
+        "project": "ImageBasedLocalization_Classify",
         "config": {
             "learning_rate": 0.02,
-            "architecture": "CNN",
             "epochs": 12,
         }
     },

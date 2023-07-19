@@ -47,7 +47,7 @@ def train():
 
     for model, config in get_models():
         os.makedirs(f"outputs/{now}/" + config["name"])
-        wandb.init(project="ImageBasedLocalization_" + config["name"], config=config_wandb["config"],
+        wandb.init(project=config_wandb["project"], config=config_wandb["config"],
                    mode="online" if config_wandb["state"] else "disabled")
         model = model.to(device)
 
@@ -104,7 +104,7 @@ def predict():
     device = init_device(config_gen)
 
     test_loader = load_test_image()
-    path = "outputs\\20230717225321\\CNNLSTM\\model.pth"
+    path = "outputs\\20230717225321\\YoloLSTM\\model.pth"
 
     classes = ["0_0", "1_11", "9_0", "9_12", "13_0", "13_12"]
     class_correct = list(0. for _ in range(len(classes)))

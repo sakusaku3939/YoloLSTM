@@ -2,10 +2,9 @@ import torch
 import torch.nn as nn
 
 
-# モデルの定義
-class CNNLSTM(nn.Module):
+class YoloLSTM(nn.Module):
     def __init__(self, param):
-        super(CNNLSTM, self).__init__()
+        super(YoloLSTM, self).__init__()
 
         self.param = param
 

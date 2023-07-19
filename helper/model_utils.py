@@ -1,11 +1,11 @@
-from models.CNNLSTM import CNNLSTM
+from models.YoloLSTM import YoloLSTM
 from config import get_config
 import sys
 
 sys.path.append('../')
 
 models = {
-    "CNNLSTM": CNNLSTM,
+    "YoloLSTM": YoloLSTM,
 }
 
 
