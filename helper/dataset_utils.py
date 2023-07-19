@@ -18,8 +18,8 @@ def load_image():
     ])
 
     # データセットの読み込み
-    train_set = torchvision.datasets.ImageFolder("./data/train", transform)
-    valid_set = torchvision.datasets.ImageFolder("./data/valid", transform)
+    train_set = torchvision.datasets.ImageFolder("./cnn_data/train", transform)
+    valid_set = torchvision.datasets.ImageFolder("./cnn_data/valid", transform)
 
     train_loader = torch.utils.data.DataLoader(
         train_set,
@@ -48,7 +48,7 @@ def load_test_image():
     ])
 
     # データセットの読み込み
-    dataset = torchvision.datasets.ImageFolder("./data/test", transform)
+    dataset = torchvision.datasets.ImageFolder("./cnn_data/test", transform)
 
     test_loader = torch.utils.data.DataLoader(
         dataset,
