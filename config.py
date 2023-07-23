@@ -5,7 +5,7 @@ from models.validation_functions import get_classification_accuracy
 
 c = {
     "general": {
-        "num_epochs": 12,
+        "num_epochs": 5,
         "random_state": 111,
         "batch_size": 5,
         "num_workers": 2,
@@ -15,8 +15,8 @@ c = {
 
     },
     "models": {
-        "SimpleCNN": {
-            "name": "SimpleCNN",
+        "CNNLSTM": {
+            "name": "CNNLSTM",
             "state": True,
             "train_settings": {
                 "loss_function": nn.CrossEntropyLoss(),
@@ -27,7 +27,7 @@ c = {
         },
     },
     "wandb": {
-        "state": True,
+        "state": False,
         "project": "ImageBasedLocalization_Classify",
         "config": {
             "learning_rate": 0.02,

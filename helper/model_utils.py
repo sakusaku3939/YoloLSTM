@@ -1,11 +1,11 @@
-from models.SimpleCNN import SimpleCNN
+from models.CNNLSTM import CNNLSTM
 from config import get_config
 import sys
 
 sys.path.append('../')
 
 models = {
-    "SimpleCNN": SimpleCNN,
+    "CNNLSTM": CNNLSTM,
 }
 
 

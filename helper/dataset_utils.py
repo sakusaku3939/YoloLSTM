@@ -13,7 +13,7 @@ def load_image():
 
     # データの前処理
     transform = transforms.Compose([
-        transforms.Resize((128, 128)),
+        transforms.Resize((224, 224)),
         transforms.ToTensor()
     ])
 
