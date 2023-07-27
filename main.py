@@ -68,14 +68,14 @@ def train():
 
                 output1, output2, output3 = model(inputs)
 
-                # loss1 = loss_function(output1, labels)
-                # loss2 = loss_function(output2, labels)
+                loss1 = loss_function(output1, labels)
+                loss2 = loss_function(output2, labels)
                 loss3 = loss_function(output3, labels)
-                # loss = 0.3 * loss1 + 0.3 * loss2 + loss3
+                loss = 0.3 * loss1 + 0.3 * loss2 + loss3
 
-                loss3.backward()
+                loss.backward()
                 optimizer.step()
-                running_loss += loss3.item()
+                running_loss += loss.item()
 
             # 各エポック後の検証
             with torch.no_grad():
@@ -85,7 +85,6 @@ def train():
                 for j, data in tqdm(enumerate(valid_loader, 0)):
                     inputs, labels = data[0].to(device), data[1].to(device)
                     pred = model(inputs)
-                    # print(pred, labels)
                     running_score += config["train_settings"]["eval_function"](pred, labels)
 
             epoch_loss, epoch_score = running_loss / (i + 1), running_score / (j + 1)
