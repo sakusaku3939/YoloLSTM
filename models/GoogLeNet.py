@@ -3,6 +3,16 @@ from torch import nn
 
 
 class GoogLeNet(nn.Module):
+    """Backbone of Googlenet.
+    The GoogLeNet is the one in [Szegedy2015CVPR] Going deeper with convolutions.
+    Notice this model doesn't contain task specific layers, i.e., classification
+    or regression. Instead it only extracts features of input to up to different
+    levels. Default forward up to the last inception block as feature map output.
+    Args:
+        with_aux: if set True, output also feature activations maps from previous
+                  layers that are the same as auxiliary heads in [Szegedy2015CVPR].
+    """
+
     def __init__(self, with_aux=False):
         super(GoogLeNet, self).__init__()
         self.with_aux = with_aux
@@ -63,9 +73,9 @@ class GoogLeNet(nn.Module):
         x = self.incp5a(x)
         x = self.incp5b(x)
         aux3 = x
-        # if self.training and self.with_aux:
-        return aux1, aux2, aux3
-        # return aux3
+        if self.training and self.with_aux:
+            return aux1, aux2, aux3
+        return aux3
 
 
 class InceptionBlock(nn.Module):

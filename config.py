@@ -5,9 +5,9 @@ from models.validation_functions import get_classification_accuracy
 
 c = {
     "general": {
-        "num_epochs": 5,
+        "num_epochs": 2,
         "random_state": 111,
-        "batch_size": 5,
+        "batch_size": 10,
         "num_workers": 2,
         "device": "cuda",
     },

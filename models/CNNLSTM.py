@@ -32,16 +32,14 @@ class CNNLSTM(nn.Module):
         # self.set_optimizer_(config)
 
     def forward(self, x):
-        # if self.training:
-        #     feat4a, feat4d, feat5b = self.extract(x)
-        #     pose = [self.regress1(feat4a), self.regress2(feat4d), self.regress3(feat5b)]
-        # else:
-        #     feat5b = self.extract(x)
-        #     pose = self.regress3(feat5b)
-        # feat5b = self.extract(x)
+        if self.training:
+            feat4a, feat4d, feat5b = self.extract(x)
+            pose = [self.regress1(feat4a), self.regress2(feat4d), self.regress3(feat5b)]
+        else:
+            feat5b = self.extract(x)
+            pose = self.regress3(feat5b)
+        # feat4a, feat4d, feat5b = self.extract(x)
         # pose = self.regress3(feat5b)
-        feat4a, feat4d, feat5b = self.extract(x)
-        pose = self.regress3(feat5b)
         return pose
 
 
