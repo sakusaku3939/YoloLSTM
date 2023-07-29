@@ -3,6 +3,20 @@ import torch.nn as nn
 
 from models.GoogLeNet import GoogLeNet
 
+"""
+MIT License
+Copyright (c) 2019 Qunjie Zhou
+
+https://github.com/GrumpyZhou/visloc-apr
+
+@InProceedings{Walch2017ICCV,
+  title = {Image-Based Localization Using LSTMs for Structured Feature Correlation},
+  author = {Walch, Florian and Hazirbas, Caner and Leal-Taixe, Laura and Sattler, Torsten and Hilsenbeck, Sebastian and Cremers, Daniel},
+  booktitle = {ICCV},
+  year = {2017}
+}
+"""
+
 
 class CNNLSTM(nn.Module):
     def __init__(self, param):
@@ -49,7 +63,7 @@ class FourDirectionalLSTM(nn.Module):
         self.lstm_downup = nn.LSTM(self.seq_size, self.hidden_size, batch_first=True, bidirectional=True)
 
     def init_hidden_(self, batch_size, device):
-        '''Return initialized hidden states and cell states for each biodirectional lstm cell'''
+        """Return initialized hidden states and cell states for each biodirectional lstm cell"""
         return (torch.randn(2, batch_size, self.hidden_size).to(device),
                 torch.randn(2, batch_size, self.hidden_size).to(device))
 
