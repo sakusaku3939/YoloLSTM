@@ -11,12 +11,10 @@ c = {
         "num_workers": 2,
         "device": "cuda",
     },
-    "data": {
-
-    },
+    "data": {},
     "models": {
-        "GoogLeNet": {
-            "name": "GoogLeNet",
+        "YoloLSTM": {
+            "name": "YoloLSTM",
             "state": True,
             "train_settings": {
                 "loss_function": nn.CrossEntropyLoss(),

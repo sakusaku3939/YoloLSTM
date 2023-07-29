@@ -63,18 +63,14 @@ def train():
             print(f"Epoch: {epoch + 1}")
 
             for i, data in tqdm(enumerate(train_loader, 0)):
-                inputs, labels = data[0].to(device), data[1].to(device)
+                inputs, labels = [d.to(device) for d in data[0]], data[1].to(device)
                 optimizer.zero_grad()
+                outputs = model(inputs)
 
-                output1, output2, output3 = model(inputs)
-
-                loss1 = loss_function(output1, labels)
-                loss2 = loss_function(output2, labels)
-                loss3 = loss_function(output3, labels)
-                loss = 0.3 * loss1 + 0.3 * loss2 + loss3
-
+                loss = loss_function(outputs, labels)
                 loss.backward()
                 optimizer.step()
+
                 running_loss += loss.item()
 
             # 各エポック後の検証
@@ -83,7 +79,7 @@ def train():
                 running_score = 0.0
 
                 for j, data in tqdm(enumerate(valid_loader, 0)):
-                    inputs, labels = data[0].to(device), data[1].to(device)
+                    inputs, labels = [d.to(device) for d in data[0]], data[1].to(device)
                     pred = model(inputs)
                     running_score += config["train_settings"]["eval_function"](pred, labels)
 
@@ -108,7 +104,7 @@ def predict():
     device = init_device(config_gen)
 
     test_loader = load_test_image()
-    path = "outputs\\20230716210612\\SimpleCNN\\model.pth"
+    path = "outputs\\20230717225321\\YoloLSTM\\model.pth"
 
     classes = ["0_0", "1_11", "9_0", "9_12", "13_0", "13_12"]
     class_correct = list(0. for _ in range(len(classes)))
@@ -124,11 +120,12 @@ def predict():
 
         with torch.no_grad():
             for data in test_loader:
-                inputs, labels = data[0].to(device), data[1].to(device)
-                outputs = model(inputs)
+                inputs, labels = [d.to(device) for d in data[0]], data[1].to(device)
+                pred = model(inputs)
 
                 # 正解数をカウントする
-                _, pred = torch.max(outputs, dim=1)
+                _, pred = torch.max(pred.data, dim=1)
+
                 for i in range(len(labels)):
                     label = labels[i]
                     class_correct[label] += (pred == labels).sum().item()
