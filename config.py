@@ -5,7 +5,7 @@ from models.validation_functions import get_classification_accuracy
 
 c = {
     "general": {
-        "num_epochs": 2,
+        "num_epochs": 12,
         "random_state": 111,
         "batch_size": 5,
         "num_workers": 2,
