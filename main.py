@@ -65,8 +65,14 @@ def train():
             for i, data in tqdm(enumerate(train_loader, 0)):
                 inputs, labels = data[0].to(device), data[1].to(device)
                 optimizer.zero_grad()
-                outputs = model(inputs)
-                loss = loss_function(outputs, labels)
+
+                output1, output2, output3 = model(inputs)
+
+                loss1 = loss_function(output1, labels)
+                loss2 = loss_function(output2, labels)
+                loss3 = loss_function(output3, labels)
+                loss = 0.3 * loss1 + 0.3 * loss2 + loss3
+
                 loss.backward()
                 optimizer.step()
                 running_loss += loss.item()

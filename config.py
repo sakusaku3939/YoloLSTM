@@ -15,8 +15,8 @@ c = {
 
     },
     "models": {
-        "SimpleCNN": {
-            "name": "SimpleCNN",
+        "GoogLeNet": {
+            "name": "GoogLeNet",
             "state": True,
             "train_settings": {
                 "loss_function": nn.CrossEntropyLoss(),
@@ -27,7 +27,7 @@ c = {
         },
     },
     "wandb": {
-        "state": True,
+        "state": False,
         "project": "ImageBasedLocalization_Classify",
         "config": {
             "learning_rate": 0.02,

@@ -1,11 +1,11 @@
-from models.SimpleCNN import SimpleCNN
+from models.GoogLeNet import GoogLeNet
 from config import get_config
 import sys
 
 sys.path.append('../')
 
 models = {
-    "SimpleCNN": SimpleCNN,
+    "GoogLeNet": GoogLeNet,
 }
 
 
