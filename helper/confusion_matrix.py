@@ -12,7 +12,7 @@ def show_confusion_matrix(y_pred, y_true, class_labels):
     # Confusion Matrixを描画
     plt.figure(figsize=(8, 6))
     ax = sns.heatmap(cm, annot=True, cmap='Blues',
-                     xticklabels=class_labels, yticklabels=class_labels)
+                     xticklabels=class_labels, yticklabels=class_labels, vmin=0, vmax=100)
     for t in ax.texts:
         t.set_text(t.get_text() + " %")
 
