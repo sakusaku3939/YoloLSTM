@@ -24,10 +24,10 @@ class SimpleCNN(nn.Module):
         o_size = 29
 
         # input: 40チャンネル * 29(height) * 29(width)
-        # output: 2クラスに分類
+        # output: 6クラスに分類
         self.fc1 = nn.Linear(40 * o_size * o_size, 120)
         self.fc2 = nn.Linear(120, 84)
-        self.fc3 = nn.Linear(84, 2)
+        self.fc3 = nn.Linear(84, 6)
 
     def forward(self, x):
         x = self.pool1(F.relu(self.conv1(x)))

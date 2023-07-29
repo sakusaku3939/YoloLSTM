@@ -1,11 +1,11 @@
 import torch.nn as nn
 import torch.optim as optim
 
-from models.validation_functions import get_r2_accuracy
+from models.validation_functions import get_classification_accuracy
 
 c = {
     "general": {
-        "num_epochs": 1,
+        "num_epochs": 12,
         "random_state": 111,
         "batch_size": 5,
         "num_workers": 2,
@@ -19,18 +19,20 @@ c = {
             "name": "SimpleCNN",
             "state": True,
             "train_settings": {
-                "loss_function": nn.MSELoss(),
+                "loss_function": nn.CrossEntropyLoss(),
                 "optimizer": optim.Adam,
-                "eval_function": get_r2_accuracy,
+                "eval_function": get_classification_accuracy,
             },
             "param": {},
         },
     },
     "wandb": {
-        "learning_rate": 0.02,
-        "architecture": "CNN",
-        "dataset": "CIFAR-100",
-        "epochs": 10,
+        "state": True,
+        "project": "ImageBasedLocalization_Classify",
+        "config": {
+            "learning_rate": 0.02,
+            "epochs": 12,
+        }
     },
 }
 
