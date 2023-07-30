@@ -26,7 +26,7 @@ c = {
     },
     "wandb": {
         "state": False,
-        "project": "ImageBasedLocalization_Classify",
+        "project": "ImageBasedLocalization_Regress",
         "config": {
             "learning_rate": 0.02,
             "epochs": 12,
