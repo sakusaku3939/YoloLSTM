@@ -10,6 +10,7 @@ import random
 import numpy as np
 import ssl
 
+from helper.confusion_matrix import show_confusion_matrix
 from helper.dataset_utils import load_image, load_test_image
 from helper.model_utils import get_models
 
@@ -39,13 +40,15 @@ def train():
 
     config_gen = get_config("general")
     device = init_device(config_gen)
-    train_loader, test_loader = load_image()
+    train_loader, valid_loader = load_image()
 
     num_epochs = config_gen["num_epochs"]
+    config_wandb = get_config("wandb")
 
     for model, config in get_models():
         os.makedirs(f"outputs/{now}/" + config["name"])
-        wandb.init(project="ImageBasedLocalization_" + config["name"], config=get_config("wandb"))
+        wandb.init(project=config_wandb["project"], config=config_wandb["config"],
+                   mode="online" if config_wandb["state"] else "disabled")
         model = model.to(device)
 
         train_settings = config["train_settings"]
@@ -60,26 +63,28 @@ def train():
             print(f"Epoch: {epoch + 1}")
 
             for i, data in tqdm(enumerate(train_loader, 0)):
-                inputs, labels = data[0].to(device), data[1].to(device)
+                inputs, labels = [d.to(device) for d in data[0]], data[1].to(device)
                 optimizer.zero_grad()
                 outputs = model(inputs)
+
                 loss = loss_function(outputs, labels)
                 loss.backward()
                 optimizer.step()
+
                 running_loss += loss.item()
 
-            # 各エポック後の処理
+            # 各エポック後の検証
             with torch.no_grad():
                 model = model.eval()
                 running_score = 0.0
 
-                for j, data in tqdm(enumerate(test_loader, 0)):
-                    inputs, labels = data[0].to(device), data[1].to(device)
+                for j, data in tqdm(enumerate(valid_loader, 0)):
+                    inputs, labels = [d.to(device) for d in data[0]], data[1].to(device)
                     pred = model(inputs)
                     running_score += config["train_settings"]["eval_function"](pred, labels)
 
             epoch_loss, epoch_score = running_loss / (i + 1), running_score / (j + 1)
-            wandb.log({"Loss": epoch_loss, "Score": epoch_score})
+            wandb.log({"Epoch": epoch + 1, "Loss": epoch_loss, "Score": epoch_score})
             result = f"Loss: {epoch_loss}  Score: {epoch_score}\n"
             results += ("Epoch:" + str(epoch + 1) + "  " + f"Loss: {epoch_loss}  Score: {epoch_score}\n")
             print(result)
@@ -99,11 +104,14 @@ def predict():
     device = init_device(config_gen)
 
     test_loader = load_test_image()
-    path = "outputs\\20230628221102\\SimpleCNN\\model.pth"
+    path = "outputs\\20230717225321\\YoloLSTM\\model.pth"
 
-    classes = ("0_0", "13_12")
-    class_correct = list(0. for _ in range(2))
-    class_total = list(0. for _ in range(2))
+    classes = ["0_0", "1_11", "9_0", "9_12", "13_0", "13_12"]
+    class_correct = list(0. for _ in range(len(classes)))
+    class_total = list(0. for _ in range(len(classes)))
+
+    y_pred = []
+    y_true = []
 
     for model, config in get_models():
         model = model.to(device)
@@ -112,26 +120,30 @@ def predict():
 
         with torch.no_grad():
             for data in test_loader:
-                inputs, labels = data[0].to(device), data[1].to(device)
-                outputs = model(inputs)
+                inputs, labels = [d.to(device) for d in data[0]], data[1].to(device)
+                pred = model(inputs)
 
                 # 正解数をカウントする
-                _, pred = torch.max(outputs, 1)
-                for i in range(2):
+                _, pred = torch.max(pred.data, dim=1)
+
+                for i in range(len(labels)):
                     label = labels[i]
                     class_correct[label] += (pred == labels).sum().item()
                     class_total[label] += test_loader.batch_size
+                    y_pred.append(pred[i].item())
+                    y_true.append(label.item())
 
                 # 分類に失敗した画像を表示する
                 if (pred == labels).sum().item() != labels.size(0):
-                    for i in range(0, len(labels)):
+                    for i in range(len(labels)):
                         if pred[i] != labels[i]:
                             images, labels = data
-                            show_img(torchvision.utils.make_grid(images[i]))
+                            # show_img(torchvision.utils.make_grid(images[i]))
                             print(f'Predicted: {classes[pred[i]]}, Label: {classes[labels[i]]}')
 
+    show_confusion_matrix(y_pred, y_true, classes)
     print()
-    for i in range(2):
+    for i in range(len(classes)):
         print('Accuracy of %5s : %2d %%' % (classes[i], 100 * class_correct[i] / class_total[i]))
 
 

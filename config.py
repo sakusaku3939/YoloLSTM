@@ -11,12 +11,10 @@ c = {
         "num_workers": 2,
         "device": "cuda",
     },
-    "data": {
-
-    },
+    "data": {},
     "models": {
-        "SimpleCNN": {
-            "name": "SimpleCNN",
+        "YoloLSTM": {
+            "name": "YoloLSTM",
             "state": True,
             "train_settings": {
                 "loss_function": nn.MSELoss(),
@@ -27,10 +25,12 @@ c = {
         },
     },
     "wandb": {
-        "learning_rate": 0.02,
-        "architecture": "CNN",
-        "dataset": "CIFAR-100",
-        "epochs": 10,
+        "state": False,
+        "project": "ImageBasedLocalization_Classify",
+        "config": {
+            "learning_rate": 0.02,
+            "epochs": 12,
+        }
     },
 }
 
