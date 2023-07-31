@@ -1,10 +1,14 @@
 import torch
-from torchmetrics.functional import r2_score
+from torchmetrics.regression import R2Score
 
 
 # 検証用関数 pred: 推測値, labels: 正解データ
 def get_r2_accuracy(pred, labels):
-    return r2_score(pred.view(-1), labels.view(-1))
+    # print(pred, labels)
+    r2score = R2Score()
+    x_score = r2score(pred[0], labels[0])
+    y_score = r2score(pred[1], labels[1])
+    return (x_score + y_score) / 2
 
 
 def get_classification_accuracy(pred, labels):
