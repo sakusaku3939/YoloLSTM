@@ -5,10 +5,8 @@ from torchmetrics.regression import R2Score
 # 検証用関数 pred: 推測値, labels: 正解データ
 def get_r2_accuracy(pred, labels):
     # print(pred, labels)
-    r2score = R2Score()
-    x_score = r2score(pred[0], labels[0])
-    y_score = r2score(pred[1], labels[1])
-    return (x_score + y_score) / 2
+    r2score = R2Score(num_outputs=2, multioutput="uniform_average")
+    return r2score(pred, labels)
 
 
 def get_classification_accuracy(pred, labels):

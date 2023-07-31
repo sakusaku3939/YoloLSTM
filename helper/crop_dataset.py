@@ -75,7 +75,4 @@ def collate_fn(batch_list):
     images = [torch.stack(batch) for batch in images_list]
     labels = torch.tensor(label_list)
 
-    # [x1,y1],[x2,y2] から ([[x1],[x2]],[[y1],[y2]]) に変換する
-    split_labels = (labels[:, 0].unsqueeze(1), labels[:, 1].unsqueeze(1))
-
-    return images, split_labels
+    return images, labels

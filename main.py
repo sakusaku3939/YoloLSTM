@@ -63,15 +63,11 @@ def train():
             print(f"Epoch: {epoch + 1}")
 
             for i, data in tqdm(enumerate(train_loader, 0)):
-                inputs = [d.to(device) for d in data[0]]
-                labels = [d.to(device) for d in data[1]]
-
+                inputs, labels = [d.to(device) for d in data[0]], data[1].to(device)
                 optimizer.zero_grad()
-                x_out, y_out = model(inputs)
+                outputs = model(inputs)
 
-                loss_x = loss_function(x_out, labels[0])
-                loss_y = loss_function(y_out, labels[1])
-                loss = (loss_x + loss_y) * 0.5
+                loss = loss_function(outputs, labels)
                 loss.backward()
                 optimizer.step()
 
@@ -83,9 +79,7 @@ def train():
                 running_score = 0.0
 
                 for j, data in tqdm(enumerate(valid_loader, 0)):
-                    inputs = [d.to(device) for d in data[0]]
-                    labels = [d.to(device) for d in data[1]]
-
+                    inputs, labels = [d.to(device) for d in data[0]], data[1].to(device)
                     pred = model(inputs)
                     running_score += config["train_settings"]["eval_function"](pred, labels)
 
