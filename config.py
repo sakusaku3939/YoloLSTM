@@ -7,7 +7,7 @@ c = {
     "general": {
         "num_epochs": 12,
         "random_state": 111,
-        "batch_size": 5,
+        "batch_size": 1,
         "num_workers": 2,
         "device": "cuda",
     },

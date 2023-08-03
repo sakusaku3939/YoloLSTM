@@ -76,13 +76,18 @@ def train():
             # 各エポック後の検証
             with torch.no_grad():
                 model = model.eval()
-                running_score = 0.0
+                pred_list = []
+                label_list = []
 
                 for j, data in tqdm(enumerate(valid_loader, 0)):
                     inputs, labels = [d.to(device) for d in data[0]], data[1].to(device)
                     pred = model(inputs)
-                    running_score += config["train_settings"]["eval_function"](pred, labels)
+                    pred_list.append(pred)
+                    label_list.append(labels)
 
+            pred_list = torch.cat(pred_list)
+            label_list = torch.cat(label_list)
+            running_score = config["train_settings"]["eval_function"](pred_list, label_list)
             epoch_loss, epoch_score = running_loss / (i + 1), running_score / (j + 1)
             wandb.log({"Epoch": epoch + 1, "Loss": epoch_loss, "Score": epoch_score})
             result = f"Loss: {epoch_loss}  Score: {epoch_score}\n"

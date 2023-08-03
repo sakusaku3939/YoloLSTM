@@ -4,7 +4,7 @@ from torchmetrics.regression import R2Score
 
 # 検証用関数 pred: 推測値, labels: 正解データ
 def get_r2_accuracy(pred, labels):
-    # print(pred, labels)
+    print(pred, labels)
     r2score = R2Score(num_outputs=2, multioutput="uniform_average")
     return r2score(pred, labels)
 
