@@ -88,10 +88,10 @@ def train():
             pred_list = torch.cat(pred_list)
             label_list = torch.cat(label_list)
             running_score = config["train_settings"]["eval_function"](pred_list, label_list)
-            epoch_loss, epoch_score = running_loss / (i + 1), running_score / (j + 1)
-            wandb.log({"Epoch": epoch + 1, "Loss": epoch_loss, "Score": epoch_score})
-            result = f"Loss: {epoch_loss}  Score: {epoch_score}\n"
-            results += ("Epoch:" + str(epoch + 1) + "  " + f"Loss: {epoch_loss}  Score: {epoch_score}\n")
+            epoch_loss = running_loss / (i + 1)
+            wandb.log({"Epoch": epoch + 1, "Loss": epoch_loss, "Score": running_score})
+            result = f"Loss: {epoch_loss}  Score: {running_score}\n"
+            results += ("Epoch:" + str(epoch + 1) + "  " + f"Loss: {epoch_loss}  Score: {running_score}\n")
             print(result)
 
         # モデル学習完了後の処理
