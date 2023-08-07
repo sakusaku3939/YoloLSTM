@@ -108,46 +108,35 @@ def predict():
     device = init_device(config_gen)
 
     test_loader = load_test_image()
-    path = "outputs\\20230716210612\\SimpleCNN\\model.pth"
-
-    classes = ["0_0", "1_11", "9_0", "9_12", "13_0", "13_12"]
-    class_correct = list(0. for _ in range(len(classes)))
-    class_total = list(0. for _ in range(len(classes)))
-
-    y_pred = []
-    y_true = []
+    path = "outputs\\20230808001010\\SimpleCNN\\model.pth"
 
     for model, config in get_models():
         model = model.to(device)
         model = model.eval()
         model.load_state_dict(torch.load(path))
 
+        train_settings = config["train_settings"]
+        loss_function = train_settings["loss_function"]
+
         with torch.no_grad():
-            for data in test_loader:
-                inputs, labels = data[0].to(device), data[1].to(device)
-                outputs = model(inputs)
+            model = model.eval()
+            pred_list = []
+            target_list = []
+            running_loss = 0.0
 
-                # 正解数をカウントする
-                _, pred = torch.max(outputs, dim=1)
-                for i in range(len(labels)):
-                    label = labels[i]
-                    class_correct[label] += (pred == labels).sum().item()
-                    class_total[label] += test_loader.batch_size
-                    y_pred.append(pred[i].item())
-                    y_true.append(label.item())
+            for j, data in tqdm(enumerate(test_loader, 0)):
+                inputs, target = data[0].to(device), data[1].to(device)
+                pred = model(inputs)
+                loss = loss_function(pred, target)
+                running_loss += loss.item()
 
-                # 分類に失敗した画像を表示する
-                if (pred == labels).sum().item() != labels.size(0):
-                    for i in range(len(labels)):
-                        if pred[i] != labels[i]:
-                            images, labels = data
-                            # show_img(torchvision.utils.make_grid(images[i]))
-                            print(f'Predicted: {classes[pred[i]]}, Label: {classes[labels[i]]}')
+                pred_list.append(pred)
+                target_list.append(target)
 
-    show_confusion_matrix(y_pred, y_true, classes)
-    print()
-    for i in range(len(classes)):
-        print('Accuracy of %5s : %2d %%' % (classes[i], 100 * class_correct[i] / class_total[i]))
+            pred_list = torch.cat(pred_list)
+            target_list = torch.cat(target_list)
+            running_score = config["train_settings"]["eval_function"](pred_list, target_list)
+            print(f"Loss: {running_loss}  Score: {running_score}\n")
 
 
 # 画像の表示関数

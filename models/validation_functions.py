@@ -4,7 +4,7 @@ from sklearn.metrics import r2_score
 
 # 検証用関数 pred: 推測値, target: 正解データ
 def get_r2_accuracy(pred, target):
-    # print(pred, target)
+    print(pred, target)
     return r2_score(pred, target)
 
 
