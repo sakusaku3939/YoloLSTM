@@ -7,7 +7,7 @@ c = {
     "general": {
         "num_epochs": 12,
         "random_state": 111,
-        "batch_size": 1,
+        "batch_size": 5,
         "num_workers": 2,
         "device": "cuda",
     },
@@ -25,7 +25,7 @@ c = {
         },
     },
     "wandb": {
-        "state": True,
+        "state": False,
         "project": "ImageBasedLocalization_Regress",
         "config": {
             "learning_rate": 0.02,
