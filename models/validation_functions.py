@@ -1,12 +1,11 @@
 import torch
-from torchmetrics.regression import R2Score
+from sklearn.metrics import r2_score
 
 
-# 検証用関数 pred: 推測値, labels: 正解データ
-def get_r2_accuracy(pred, labels):
-    print(pred, labels)
-    r2score = R2Score(num_outputs=2, multioutput="uniform_average")
-    return r2score(pred, labels)
+# 検証用関数 pred: 推測値, target: 正解データ
+def get_r2_accuracy(pred, target):
+    print(pred, target)
+    return r2_score(pred, target)
 
 
 def get_classification_accuracy(pred, labels):

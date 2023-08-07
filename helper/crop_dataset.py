@@ -33,7 +33,7 @@ class CropDataset(Dataset):
                         file_paths.append(os.path.join(current_dir, f_name))
 
                 position = [float(p) for p in re.findall(r'\d+', c_path)]
-                self.dataset.append({"label": position, "file_paths": file_paths})
+                self.dataset.append({"target": position, "file_paths": file_paths})
 
         self.root = root
         self.transform = transform
@@ -51,8 +51,8 @@ class CropDataset(Dataset):
 
             images.append(img)
 
-        label = self.dataset[index]["label"]
-        return images, label
+        target = self.dataset[index]["target"]
+        return images, target
 
     def __len__(self):
         return len(self.dataset)

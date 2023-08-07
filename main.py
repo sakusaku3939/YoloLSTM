@@ -63,11 +63,11 @@ def train():
             print(f"Epoch: {epoch + 1}")
 
             for i, data in tqdm(enumerate(train_loader, 0)):
-                inputs, labels = [d.to(device) for d in data[0]], data[1].to(device)
+                inputs, target = [d.to(device) for d in data[0]], data[1].to(device)
                 optimizer.zero_grad()
                 outputs = model(inputs)
 
-                loss = loss_function(outputs, labels)
+                loss = loss_function(outputs, target)
                 loss.backward()
                 optimizer.step()
 
@@ -80,10 +80,10 @@ def train():
                 label_list = []
 
                 for j, data in tqdm(enumerate(valid_loader, 0)):
-                    inputs, labels = [d.to(device) for d in data[0]], data[1].to(device)
+                    inputs, target = [d.to(device) for d in data[0]], data[1].to(device)
                     pred = model(inputs)
                     pred_list.append(pred)
-                    label_list.append(labels)
+                    label_list.append(target)
 
             pred_list = torch.cat(pred_list)
             label_list = torch.cat(label_list)
