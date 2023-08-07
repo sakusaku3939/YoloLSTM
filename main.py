@@ -63,11 +63,10 @@ def train():
             print(f"Epoch: {epoch + 1}")
 
             for i, data in tqdm(enumerate(train_loader, 0)):
-                # inputs: torch.Size([5, 3, 128, 128]) labels: torch.Size([5])
-                inputs, labels = data[0].to(device), data[1].to(device)
+                inputs, target = data[0].to(device), data[1].to(device)
                 optimizer.zero_grad()
                 outputs = model(inputs)
-                loss = loss_function(outputs, labels)
+                loss = loss_function(outputs, target)
                 loss.backward()
                 optimizer.step()
                 running_loss += loss.item()
@@ -75,14 +74,20 @@ def train():
             # 各エポック後の検証
             with torch.no_grad():
                 model = model.eval()
-                running_score = 0.0
+                pred_list = []
+                target_list = []
 
                 for j, data in tqdm(enumerate(valid_loader, 0)):
-                    inputs, labels = data[0].to(device), data[1].to(device)
+                    inputs, target = data[0].to(device), data[1].to(device)
                     pred = model(inputs)
-                    running_score += config["train_settings"]["eval_function"](pred, labels)
+                    pred_list.append(pred)
+                    target_list.append(target)
 
+            pred_list = torch.cat(pred_list)
+            target_list = torch.cat(target_list)
+            running_score = config["train_settings"]["eval_function"](pred_list, target_list)
             epoch_loss, epoch_score = running_loss / (i + 1), running_score / (j + 1)
+
             wandb.log({"Epoch": epoch + 1, "Loss": epoch_loss, "Score": epoch_score})
             result = f"Loss: {epoch_loss}  Score: {epoch_score}\n"
             results += ("Epoch:" + str(epoch + 1) + "  " + f"Loss: {epoch_loss}  Score: {epoch_score}\n")
