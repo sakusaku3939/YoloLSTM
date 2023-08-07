@@ -18,7 +18,7 @@ class ImageDataset(Dataset):
             position = [float(p) for p in re.findall(r'\d+', d_name)]
             file_paths = glob.glob(f"{root}/{d_name}/*")
             for f_path in file_paths:
-                self.dataset.append({"label": position, "f_path": f_path})
+                self.dataset.append({"target": position, "f_path": f_path})
 
         self.root = root
         self.transform = transform
@@ -32,8 +32,8 @@ class ImageDataset(Dataset):
         if self.transform is not None:
             img = self.transform(img)
 
-        label = self.dataset[index]["label"]
-        return img, torch.tensor(label)
+        target = self.dataset[index]["target"]
+        return img, torch.tensor(target)
 
     def __len__(self):
         return len(self.dataset)
