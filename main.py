@@ -108,7 +108,7 @@ def predict():
     device = init_device(config_gen)
 
     test_loader = load_test_image()
-    path = "outputs\\20230808001010\\SimpleCNN\\model.pth"
+    path = "outputs\\20230808222738\\SimpleCNN\\model.pth"
 
     for model, config in get_models():
         model = model.to(device)
@@ -136,7 +136,7 @@ def predict():
             pred_list = torch.cat(pred_list)
             target_list = torch.cat(target_list)
             running_score = config["train_settings"]["eval_function"](pred_list, target_list)
-            print(f"Loss: {running_loss}  Score: {running_score}\n")
+            print(f"Loss: {running_loss / (j + 1)}  Score: {running_score}\n")
 
 
 # 画像の表示関数
