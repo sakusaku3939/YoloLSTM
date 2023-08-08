@@ -44,11 +44,12 @@ def train():
 
     num_epochs = config_gen["num_epochs"]
     config_wandb = get_config("wandb")
+    save_epoch, save_loss = 0, 0.0
 
     for model, config in get_models():
         os.makedirs(f"outputs/{now}/" + config["name"])
         wandb.init(project=config_wandb["project"], config=config_wandb["config"],
-                   mode="online" if config_wandb["state"] else "disabled")
+                   mode="online" if config_wandb["state"] else "disabled", resume=config["load_checkpoint"])
         model = model.to(device)
 
         train_settings = config["train_settings"]
@@ -56,11 +57,25 @@ def train():
         optimizer = train_settings["optimizer"](model.parameters())
         results = ""
 
-        for epoch in range(num_epochs):
+        # チェックポイントから学習を再開
+        checkpoint_epoch = 1, 0.0
+        if config["load_checkpoint"]:
+            path = "outputs\\20230808161130\\YoloLSTM\\training_state.pt"
+            checkpoint = torch.load(path)
+            model.load_state_dict(checkpoint['model_state_dict'])
+            optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+
+            # Optimizerのstateを現在のdeviceに移す
+            for state in optimizer.state.values():
+                for k, v in state.items():
+                    if isinstance(v, torch.Tensor):
+                        state[k] = v.to(device)
+            checkpoint_epoch = checkpoint['epoch']
+
+        for epoch in range(checkpoint_epoch, num_epochs + 1):
             model = model.train()
             running_loss = 0.0
-            i = 0
-            print(f"Epoch: {epoch + 1}")
+            print(f"Epoch: {epoch}")
 
             for i, data in tqdm(enumerate(train_loader, 0)):
                 inputs, target = [d.to(device) for d in data[0]], data[1].to(device)
@@ -88,15 +103,22 @@ def train():
             pred_list = torch.cat(pred_list)
             label_list = torch.cat(label_list)
             running_score = config["train_settings"]["eval_function"](pred_list, label_list)
+
             epoch_loss = running_loss / (i + 1)
-            wandb.log({"Epoch": epoch + 1, "Loss": epoch_loss, "Score": running_score})
+            wandb.log({"Epoch": epoch, "Loss": epoch_loss, "Score": running_score})
+            save_epoch, save_loss = epoch, running_loss
+
             result = f"Loss: {epoch_loss}  Score: {running_score}\n"
-            results += ("Epoch:" + str(epoch + 1) + "  " + f"Loss: {epoch_loss}  Score: {running_score}\n")
+            results += ("Epoch:" + str(epoch) + "  " + f"Loss: {epoch_loss}  Score: {running_score}\n")
             print(result)
 
-        # モデル学習完了後の処理
+        # モデル学習完了後の保存処理
         out_dir = f"outputs/{now}/" + config["name"] + "/"
         torch.save(model.state_dict(), out_dir + "model.pth")
+        if config_wandb["state"]:
+            torch.save({'epoch': save_epoch, 'model_state_dict': model.state_dict(),
+                        'optimizer_state_dict': optimizer.state_dict(), 'loss': save_loss},
+                       out_dir + "training_state.pt")
         with open(out_dir + "results.txt", "w") as file:
             file.write(results)
         wandb.finish()

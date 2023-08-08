@@ -16,6 +16,7 @@ c = {
         "YoloLSTM": {
             "name": "YoloLSTM",
             "state": True,
+            "load_checkpoint": False,
             "train_settings": {
                 "loss_function": nn.MSELoss(),
                 "optimizer": optim.Adam,
