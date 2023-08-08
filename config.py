@@ -16,7 +16,7 @@ c = {
         "YoloLSTM": {
             "name": "YoloLSTM",
             "state": True,
-            "load_checkpoint": False,
+            "checkpoint_resume": False,
             "train_settings": {
                 "loss_function": nn.MSELoss(),
                 "optimizer": optim.Adam,
@@ -26,7 +26,7 @@ c = {
         },
     },
     "wandb": {
-        "state": False,
+        "state": True,
         "project": "ImageBasedLocalization_Regress",
         "config": {
             "learning_rate": 0.02,
