@@ -1,35 +1,40 @@
+import glob
+import os
+import re
+
 import torch
 from torch.utils.data import Dataset
 from PIL import Image
-import csv
-
-path = "./data/train/0627/"
 
 
 class ImageDataset(Dataset):
-    def __init__(self, transform) -> None:
+    def __init__(self, root, transform) -> None:
         super().__init__()
-        # CSVファイルから画像パスと正解データに分割
-        with open(path + "label.csv") as f:
-            csv_data = csv.reader(f)
-            data = [line for line in csv_data]
-            image_paths = [line[0] for line in data]
-            labels = [torch.tensor([float(line[1]), float(line[2])], dtype=torch.float32) for line in data]
+        self.dataset = []
 
-        self.image_paths = image_paths
-        self.labels = labels
+        # datasetにラベルと画像パスを追加
+        dir_names = sorted(os.listdir(root))
+        for d_name in dir_names:
+            position = [float(p) for p in re.findall(r'\d+', d_name)]
+            file_paths = glob.glob(f"{root}/{d_name}/*")
+            for f_path in file_paths:
+                self.dataset.append({"target": position, "f_path": f_path})
+
+        self.root = root
         self.transform = transform
 
     def __getitem__(self, index):
-        image_path = self.image_paths[index]
-        img = Image.open(path + image_path)
+        f_path = self.dataset[index]["f_path"]
+
+        img = Image.open(f_path)
 
         # 画像を前処理
         if self.transform is not None:
             img = self.transform(img)
 
-        label = self.labels[index]
-        return img, label, image_path
+        target = self.dataset[index]["target"]
+        return img, torch.tensor(target)
 
     def __len__(self):
-        return len(self.image_paths)
+        return len(self.dataset)
+
