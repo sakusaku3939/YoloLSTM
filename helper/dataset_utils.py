@@ -1,9 +1,10 @@
 import torch
+import torchvision
 import torchvision.transforms as transforms
 from config import get_config
 import sys
 
-from helper.image_dataset import ImageDataset
+from helper.crop_dataset import CropDataset, collate_fn
 
 sys.path.append('../')
 
@@ -14,25 +15,27 @@ def load_image():
 
     # データの前処理
     transform = transforms.Compose([
-        transforms.Resize((128, 128)),
+        transforms.Resize((64, 64)),
         transforms.ToTensor()
     ])
 
     # データセットの読み込み
-    train_set = ImageDataset("./cnn_data/train", transform)
-    valid_set = ImageDataset("./cnn_data/valid", transform)
+    train_set = CropDataset("data/train", transform)
+    valid_set = CropDataset("data/valid", transform)
 
     train_loader = torch.utils.data.DataLoader(
         train_set,
         batch_size=batch_size,
         shuffle=True,
         num_workers=num_workers,
+        collate_fn=collate_fn
     )
     valid_loader = torch.utils.data.DataLoader(
         valid_set,
         batch_size=batch_size,
-        shuffle=False,
+        shuffle=True,
         num_workers=num_workers,
+        collate_fn=collate_fn
     )
 
     return train_loader, valid_loader
@@ -44,18 +47,19 @@ def load_test_image():
 
     # データの前処理
     transform = transforms.Compose([
-        transforms.Resize((128, 128)),
+        transforms.Resize((64, 64)),
         transforms.ToTensor()
     ])
 
     # データセットの読み込み
-    dataset = ImageDataset("./cnn_data/test", transform)
+    dataset = CropDataset("data/test", transform)
 
     test_loader = torch.utils.data.DataLoader(
         dataset,
         batch_size=batch_size,
         shuffle=False,
-        num_workers=num_workers
+        num_workers=num_workers,
+        collate_fn=collate_fn
     )
 
     return test_loader

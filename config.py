@@ -18,6 +18,7 @@ c = {
         "SimpleCNN": {
             "name": "SimpleCNN",
             "state": True,
+            "checkpoint_resume": False,
             "train_settings": {
                 "loss_function": nn.MSELoss(),
                 "optimizer": optim.Adam,
