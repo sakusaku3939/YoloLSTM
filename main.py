@@ -22,6 +22,7 @@ random_state = get_config("general", "random_state")
 random.seed(random_state)
 np.random.seed(random_state)
 torch.manual_seed(random_state)
+torch.set_printoptions(sci_mode=False)
 
 
 # GPUデバイスの設定
