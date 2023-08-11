@@ -1,5 +1,4 @@
 import torch
-import torchvision
 import torchvision.transforms as transforms
 from config import get_config
 import sys

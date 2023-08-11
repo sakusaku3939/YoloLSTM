@@ -1,5 +1,4 @@
 import torch
-import torchvision
 import matplotlib.pyplot as plt
 
 from tqdm import tqdm
@@ -32,6 +31,7 @@ def init_device(config_gen):
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     else:
         device = torch.device(config_gen["device"])
+    print(f"Device type: {device}")
     return device
 
 
