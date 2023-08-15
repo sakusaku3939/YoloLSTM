@@ -17,11 +17,15 @@ from config import get_config
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
+# 乱数シードを固定
 random_state = get_config("general", "random_state")
 random.seed(random_state)
 np.random.seed(random_state)
 torch.manual_seed(random_state)
 torch.set_printoptions(sci_mode=False)
+torch.backends.cudnn.benchmark = False
+torch.backends.cudnn.deterministic = True
+os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":16:8"
 
 
 # GPUデバイスの設定
