@@ -22,19 +22,26 @@ def load_image():
     train_set = CropDataset("data/train", transform)
     valid_set = CropDataset("data/valid", transform)
 
+    # 乱数シードの固定
+    random_state = get_config("general", "random_state")
+    g = torch.Generator()
+    g.manual_seed(random_state)
+
     train_loader = torch.utils.data.DataLoader(
         train_set,
         batch_size=batch_size,
         shuffle=True,
         num_workers=num_workers,
-        collate_fn=collate_fn
+        generator=g,
+        collate_fn=collate_fn,
     )
     valid_loader = torch.utils.data.DataLoader(
         valid_set,
         batch_size=batch_size,
         shuffle=True,
         num_workers=num_workers,
-        collate_fn=collate_fn
+        generator=g,
+        collate_fn=collate_fn,
     )
 
     return train_loader, valid_loader
