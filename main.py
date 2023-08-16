@@ -1,5 +1,6 @@
 import torch
 import matplotlib.pyplot as plt
+from torch import nn
 
 from tqdm import tqdm
 import os
@@ -136,7 +137,7 @@ def predict():
     device = init_device(config_gen)
 
     test_loader = load_test_image()
-    path = "outputs\\20230808190027\\YoloLSTM\\model.pth"
+    path = "outputs\\20230815140542\\YoloLSTM\\model.pth"
 
     for model, config in get_models():
         model = model.to(device)
@@ -145,6 +146,7 @@ def predict():
 
         train_settings = config["train_settings"]
         loss_function = train_settings["loss_function"]
+        mae_function = nn.L1Loss()
 
         with torch.no_grad():
             model = model.eval()
@@ -164,7 +166,12 @@ def predict():
             pred_list = torch.cat(pred_list)
             target_list = torch.cat(target_list)
             running_score = config["train_settings"]["eval_function"](pred_list, target_list)
-            print(f"Loss: {running_loss / (j + 1)}  Score: {running_score}\n")
+            mean_error = mae_function(pred_list, target_list)
+
+            tile_width = 0.45  # 1タイルの長さ (m)
+            mean_error_text = f"{mean_error} / {tile_width * mean_error}m"
+
+            print(f"Loss: {running_loss / (j + 1)}  Score: {running_score}  Mean error: {mean_error_text}\n")
 
 
 # 画像の表示関数
