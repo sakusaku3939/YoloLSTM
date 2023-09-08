@@ -16,11 +16,12 @@ class YoloLSTM(nn.Module):
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2)
         )
-        self.lstm = nn.LSTM(input_size=8192, hidden_size=64, num_layers=2, batch_first=True)
-        self.fc = nn.Linear(64, 6)
+        self.lstm = nn.LSTM(input_size=8192, hidden_size=2048, num_layers=2, batch_first=True)
+        self.fc = nn.Linear(2048, 2)
 
     def forward(self, batch_i):
-        batch_o = []
+        batch_out = []
+
         for x in batch_i:
             crop_size, channels, height, width = x.size()
 
@@ -33,9 +34,9 @@ class YoloLSTM(nn.Module):
             _, (h_n, _) = self.lstm(x)
             x = h_n[-1]
 
-            # LSTM層の出力から分類
+            # 2D座標を回帰
             x = self.fc(x)
-            batch_o.append(x)
+            batch_out.append(x)
 
-        batch_o = torch.stack(batch_o)
-        return batch_o
+        batch_out = torch.stack(batch_out)
+        return batch_out

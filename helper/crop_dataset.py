@@ -1,10 +1,16 @@
+import concurrent.futures
 import glob
 import os
+import re
+import itertools
+
 import torch
 from torch.utils.data import Dataset
 from PIL import Image
 from tqdm import tqdm
 from ultralytics import YOLO
+
+from config import get_config
 
 
 class CropDataset(Dataset):
@@ -13,17 +19,19 @@ class CropDataset(Dataset):
 
         # 初回実行の場合は、画像をYOLOでクロップする
         if not glob.glob(f"{root}/cropped_*"):
-            for f in glob.glob(f"{root}/*"):
+            for f in tqdm(glob.glob(f"{root}/*")):
                 crop_images(input_path=f, output_path=f"{root}/cropped_{os.path.split(f)[1]}")
 
         cropped_paths = glob.glob(f"{root}/cropped_*")
         self.dataset = []
 
-        # ディレクトリ配下にあるクロップ画像のパスを取得
+        # datasetにラベルと画像パスを追加
         for i, c_path in enumerate(cropped_paths):
             dir_names = sorted(os.listdir(c_path))
             for d_name in dir_names:
                 file_paths = []
+
+                # ディレクトリ配下にあるクロップ画像のパスを取得
                 for current_dir, sub_dirs, files_list in os.walk(f"{c_path}/{d_name}"):
                     for f_name in files_list:
                         file_paths.append(os.path.join(current_dir, f_name))
@@ -53,12 +61,20 @@ class CropDataset(Dataset):
 
 
 def crop_images(input_path, output_path):
-    model = YOLO("yolov8x.pt")
+    num_workers = get_config("general")["num_workers"]
     file_names = sorted(os.listdir(input_path))
 
-    for f_name in tqdm(file_names):
-        name = os.path.splitext(f_name)[0]
-        model(f"{input_path}/{f_name}", project=output_path, name=name, save_crop=True, conf=0.1)
+    input_paths = [f"{input_path}/{f_name}" for f_name in file_names]
+    output_paths = itertools.repeat(output_path)
+    names = [os.path.splitext(f_name)[0] for f_name in file_names]
+
+    with concurrent.futures.ProcessPoolExecutor(max_workers=num_workers) as executor:
+        executor.map(yolo, input_paths, output_paths, names)
+
+
+def yolo(input_path, output_path, name):
+    model = YOLO("yolov8x.pt")
+    model(input_path, project=output_path, name=name, save_crop=True, conf=0.1)
 
 
 def collate_fn(batch_list):

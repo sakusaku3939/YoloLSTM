@@ -11,11 +11,14 @@ c = {
         "num_workers": 2,
         "device": "cuda",
     },
-    "data": {},
+    "data": {
+
+    },
     "models": {
         "YoloLSTM": {
             "name": "YoloLSTM",
             "state": True,
+            "checkpoint_resume": False,
             "train_settings": {
                 "loss_function": nn.CrossEntropyLoss(),
                 "optimizer": optim.Adam,
@@ -25,7 +28,7 @@ c = {
         },
     },
     "wandb": {
-        "state": False,
+        "state": True,
         "project": "ImageBasedLocalization_Classify",
         "config": {
             "learning_rate": 0.02,
