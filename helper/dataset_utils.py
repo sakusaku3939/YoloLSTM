@@ -1,6 +1,6 @@
 import torch
+import torchvision
 import torchvision.transforms as transforms
-from config import get_config
 import sys
 
 from helper.crop_dataset import CropDataset, collate_fn
@@ -8,10 +8,7 @@ from helper.crop_dataset import CropDataset, collate_fn
 sys.path.append('../')
 
 
-def load_image():
-    batch_size = get_config("general", "batch_size")
-    num_workers = get_config("general", "num_workers")
-
+def load_cropped_image(batch_size, num_workers, random_state):
     # データの前処理
     transform = transforms.Compose([
         transforms.Resize((64, 64)),
@@ -19,11 +16,10 @@ def load_image():
     ])
 
     # データセットの読み込み
-    train_set = CropDataset("data/train", transform)
-    valid_set = CropDataset("data/valid", transform)
+    train_set = CropDataset("data/train", transform, num_workers)
+    valid_set = CropDataset("data/valid", transform, num_workers)
 
     # 乱数シードの固定
-    random_state = get_config("general", "random_state")
     g = torch.Generator()
     g.manual_seed(random_state)
 
@@ -47,10 +43,40 @@ def load_image():
     return train_loader, valid_loader
 
 
-def load_test_image():
-    batch_size = get_config("general", "batch_size")
-    num_workers = get_config("general", "num_workers")
+def load_image(batch_size, num_workers, random_state):
+    # データの前処理
+    transform = transforms.Compose([
+        transforms.Resize((224, 224)),
+        transforms.ToTensor()
+    ])
 
+    # データセットの読み込み
+    train_set = torchvision.datasets.ImageFolder("./cnn_data/train", transform)
+    valid_set = torchvision.datasets.ImageFolder("./cnn_data/valid", transform)
+
+    # 乱数シードの固定
+    g = torch.Generator()
+    g.manual_seed(random_state)
+
+    train_loader = torch.utils.data.DataLoader(
+        train_set,
+        batch_size=batch_size,
+        shuffle=True,
+        num_workers=num_workers,
+        generator=g,
+    )
+    valid_loader = torch.utils.data.DataLoader(
+        valid_set,
+        batch_size=batch_size,
+        shuffle=False,
+        num_workers=num_workers,
+        generator=g,
+    )
+
+    return train_loader, valid_loader
+
+
+def load_test_image(batch_size, num_workers, random_state):
     # データの前処理
     transform = transforms.Compose([
         transforms.Resize((64, 64)),
@@ -58,7 +84,7 @@ def load_test_image():
     ])
 
     # データセットの読み込み
-    dataset = CropDataset("data/test", transform)
+    dataset = CropDataset("data/test", transform, num_workers)
 
     test_loader = torch.utils.data.DataLoader(
         dataset,

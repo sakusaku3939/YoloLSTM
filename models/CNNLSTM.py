@@ -23,7 +23,7 @@ class CNNLSTM(nn.Module):
         super(CNNLSTM, self).__init__()
         self.param = param
 
-        self.extract = GoogLeNet()
+        self.extract = GoogLeNet(param={"num_classes": 1024})
         self.regress1 = Regression('regress1')
         self.regress2 = Regression('regress2')
         self.regress3 = Regression('regress3')
@@ -44,7 +44,7 @@ class Regression(nn.Module):
         self.regress_fc_pose = nn.Sequential(nn.Linear(1024, 2048), nn.ReLU())
         self.lstm4dir = FourDirectionalLSTM(seq_size=32, origin_feat_size=2048, hidden_size=256)
         self.regress_lstm4d = nn.Sequential(self.lstm4dir, nn.Dropout(0.5))
-        self.regress_fc_xyz = nn.Linear(1024, 6)
+        self.regress_fc_xyz = nn.Linear(1024, 2)
 
     def forward(self, x):
         x = self.regress_fc_pose(x)

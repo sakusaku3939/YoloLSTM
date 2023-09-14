@@ -4,16 +4,13 @@ import torch.nn.functional as F
 
 
 class GoogLeNet(nn.Module):
-    def __init__(
-            self,
-            param,
-            num_classes=6,
-            aux_logits=True,
-            dropout=0.4,
-            dropout_aux=0.7,
-    ):
+    def __init__(self, param):
         super().__init__()
-        self.param = param
+
+        num_classes = param["num_classes"]
+        aux_logits = True
+        dropout = 0.4
+        dropout_aux = 0.7
 
         self.aux_logits = aux_logits
 
@@ -173,3 +170,14 @@ class BasicConv2d(nn.Module):
         x = self.relu(x)
 
         return x
+
+
+def calc_loss(outputs, labels):
+    loss_function = nn.CrossEntropyLoss()
+
+    loss1 = loss_function(outputs[0], labels)
+    loss2 = loss_function(outputs[1], labels)
+    loss3 = loss_function(outputs[2], labels)
+
+    loss = 0.3 * loss1 + 0.3 * loss2 + loss3
+    return loss
