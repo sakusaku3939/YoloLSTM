@@ -50,12 +50,12 @@ c = {
                 "eval_function": get_classification_accuracy,
             },
             "param": {
-                "num_classes": 2
+                "num_classes": 3
             },
         },
         "SimpleCNN": {
             "name": "SimpleCNN",
-            "state": True,
+            "state": False,
             "checkpoint_resume": False,
             "train_settings": {
                 "data_loader_function": load_image,
@@ -71,7 +71,6 @@ c = {
         "project": "ImageBasedLocalization_Classify",
         "config": {
             "learning_rate": 0.02,
-            "epochs": 12,
         }
     },
 }
