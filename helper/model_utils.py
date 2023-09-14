@@ -1,4 +1,5 @@
 from models.CNNLSTM import CNNLSTM
+from models.GoogLeNet import GoogLeNet
 from models.YoloLSTM import YoloLSTM
 from config import get_config
 import sys
@@ -8,6 +9,7 @@ sys.path.append('../')
 models = {
     "YoloLSTM": YoloLSTM,
     "CNNLSTM": CNNLSTM,
+    "GoogLeNet": GoogLeNet,
 }
 
 

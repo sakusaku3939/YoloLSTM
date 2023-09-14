@@ -23,7 +23,7 @@ class CNNLSTM(nn.Module):
         super(CNNLSTM, self).__init__()
         self.param = param
 
-        self.extract = GoogLeNet()
+        self.extract = GoogLeNet(param={"num_classes": 1024})
         self.regress1 = Regression('regress1')
         self.regress2 = Regression('regress2')
         self.regress3 = Regression('regress3')

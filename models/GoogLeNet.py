@@ -4,14 +4,14 @@ import torch.nn.functional as F
 
 
 class GoogLeNet(nn.Module):
-    def __init__(
-            self,
-            num_classes=1024,
-            aux_logits=True,
-            dropout=0.4,
-            dropout_aux=0.7,
-    ):
+    def __init__(self, param):
         super().__init__()
+
+        num_classes = param["num_classes"]
+        aux_logits = True
+        dropout = 0.4
+        dropout_aux = 0.7
+
         self.aux_logits = aux_logits
 
         self.conv1 = BasicConv2d(3, 64, kernel_size=7, stride=2, padding=3)

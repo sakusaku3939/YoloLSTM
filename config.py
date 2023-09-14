@@ -39,6 +39,20 @@ c = {
             },
             "param": {},
         },
+        "GoogLeNet": {
+            "name": "GoogLeNet",
+            "state": False,
+            "checkpoint_resume": False,
+            "train_settings": {
+                "data_loader_function": load_image,
+                "loss_function": calc_loss,
+                "optimizer": optim.Adam,
+                "eval_function": get_classification_accuracy,
+            },
+            "param": {
+                "num_classes": 2
+            },
+        },
     },
     "wandb": {
         "state": True,
