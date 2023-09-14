@@ -54,17 +54,23 @@ def load_image(batch_size, num_workers, random_state):
     train_set = torchvision.datasets.ImageFolder("./cnn_data/train", transform)
     valid_set = torchvision.datasets.ImageFolder("./cnn_data/valid", transform)
 
+    # 乱数シードの固定
+    g = torch.Generator()
+    g.manual_seed(random_state)
+
     train_loader = torch.utils.data.DataLoader(
         train_set,
         batch_size=batch_size,
         shuffle=True,
-        num_workers=num_workers
+        num_workers=num_workers,
+        generator=g,
     )
     valid_loader = torch.utils.data.DataLoader(
         valid_set,
         batch_size=batch_size,
         shuffle=False,
-        num_workers=num_workers
+        num_workers=num_workers,
+        generator=g,
     )
 
     return train_loader, valid_loader

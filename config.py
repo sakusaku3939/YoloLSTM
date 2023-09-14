@@ -53,6 +53,18 @@ c = {
                 "num_classes": 2
             },
         },
+        "SimpleCNN": {
+            "name": "SimpleCNN",
+            "state": True,
+            "checkpoint_resume": False,
+            "train_settings": {
+                "data_loader_function": load_image,
+                "loss_function": nn.CrossEntropyLoss(),
+                "optimizer": optim.Adam,
+                "eval_function": get_classification_accuracy,
+            },
+            "param": {},
+        },
     },
     "wandb": {
         "state": True,
