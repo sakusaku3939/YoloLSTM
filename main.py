@@ -11,7 +11,7 @@ import numpy as np
 import ssl
 
 from helper.confusion_matrix import show_confusion_matrix
-from helper.dataset_utils import load_image, load_test_image
+from helper.dataset_utils import load_test_image
 from helper.model_utils import get_models
 
 from config import get_config
@@ -46,9 +46,11 @@ def train():
 
     config_gen = get_config("general")
     device = init_device(config_gen)
-    train_loader, valid_loader = load_image()
 
     num_epochs = config_gen["num_epochs"]
+    batch_size = config_gen["batch_size"]
+    num_workers = config_gen["num_workers"]
+
     config_wandb = get_config("wandb")
     save_epoch, save_loss = 0, 0.0
 
@@ -61,6 +63,7 @@ def train():
         train_settings = config["train_settings"]
         loss_function = train_settings["loss_function"]
         optimizer = train_settings["optimizer"](model.parameters())
+        train_loader, valid_loader = train_settings["data_loader_function"](batch_size, num_workers, random_state)
         results = ""
 
         # チェックポイントから学習を再開
@@ -84,7 +87,9 @@ def train():
             print(f"Epoch: {epoch}")
 
             for i, data in tqdm(enumerate(train_loader, 0)):
-                inputs, labels = [d.to(device) for d in data[0]], data[1].to(device)
+                inputs = [d.to(device) for d in data[0]] if type(data[0]) is list else data[0].to(device)
+                labels = data[1].to(device)
+
                 optimizer.zero_grad()
                 outputs = model(inputs)
 
@@ -100,7 +105,9 @@ def train():
                 running_score = 0.0
 
                 for j, data in tqdm(enumerate(valid_loader, 0)):
-                    inputs, labels = [d.to(device) for d in data[0]], data[1].to(device)
+                    inputs = [d.to(device) for d in data[0]] if type(data[0]) is list else data[0].to(device)
+                    labels = data[1].to(device)
+
                     pred = model(inputs)
                     running_score += config["train_settings"]["eval_function"](pred, labels)
 
@@ -128,9 +135,11 @@ def train():
 def predict():
     torch.multiprocessing.freeze_support()
     config_gen = get_config("general")
+    batch_size = config_gen["batch_size"]
+    num_workers = config_gen["num_workers"]
     device = init_device(config_gen)
 
-    test_loader = load_test_image()
+    test_loader = load_test_image(batch_size, num_workers, random_state)
     path = "outputs\\20230717225321\\YoloLSTM\\model.pth"
 
     classes = ["0_0", "1_11", "9_0", "9_12", "13_0", "13_12"]

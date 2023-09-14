@@ -170,3 +170,14 @@ class BasicConv2d(nn.Module):
         x = self.relu(x)
 
         return x
+
+
+def calc_loss(outputs, labels):
+    loss_function = nn.CrossEntropyLoss()
+
+    loss1 = loss_function(outputs[0], labels)
+    loss2 = loss_function(outputs[1], labels)
+    loss3 = loss_function(outputs[2], labels)
+
+    loss = 0.3 * loss1 + 0.3 * loss2 + loss3
+    return loss

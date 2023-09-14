@@ -1,6 +1,8 @@
 import torch.nn as nn
 import torch.optim as optim
 
+from helper.dataset_utils import load_cropped_image, load_image
+from models.GoogLeNet import calc_loss
 from models.validation_functions import get_classification_accuracy
 
 c = {
@@ -11,16 +13,27 @@ c = {
         "num_workers": 2,
         "device": "cuda",
     },
-    "data": {
-
-    },
+    "data": {},
     "models": {
         "YoloLSTM": {
             "name": "YoloLSTM",
             "state": True,
             "checkpoint_resume": False,
             "train_settings": {
+                "data_loader_function": load_cropped_image,
                 "loss_function": nn.CrossEntropyLoss(),
+                "optimizer": optim.Adam,
+                "eval_function": get_classification_accuracy,
+            },
+            "param": {},
+        },
+        "CNNLSTM": {
+            "name": "CNNLSTM",
+            "state": False,
+            "checkpoint_resume": False,
+            "train_settings": {
+                "data_loader_function": load_image,
+                "loss_function": calc_loss,
                 "optimizer": optim.Adam,
                 "eval_function": get_classification_accuracy,
             },
