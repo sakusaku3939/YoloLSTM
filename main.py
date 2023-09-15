@@ -11,7 +11,6 @@ import numpy as np
 import ssl
 
 from helper.confusion_matrix import show_confusion_matrix
-from helper.dataset_utils import load_test_image
 from helper.model_utils import get_models
 
 from config import get_config
@@ -63,7 +62,7 @@ def train():
         train_settings = config["train_settings"]
         loss_function = train_settings["loss_function"]
         optimizer = train_settings["optimizer"](model.parameters())
-        train_loader, valid_loader = train_settings["data_loader_function"](batch_size, num_workers, random_state)
+        train_loader, valid_loader = train_settings["data_loader_function"][0](batch_size, num_workers, random_state)
         results = ""
 
         # チェックポイントから学習を再開
@@ -139,27 +138,29 @@ def predict():
     num_workers = config_gen["num_workers"]
     device = init_device(config_gen)
 
-    test_loader = load_test_image(batch_size, num_workers, random_state)
-    path = "outputs\\20230717225321\\YoloLSTM\\model.pth"
-
-    classes = ["0_0", "1_11", "9_0", "9_12", "13_0", "13_12"]
-    class_correct = list(0. for _ in range(len(classes)))
-    class_total = list(0. for _ in range(len(classes)))
-
-    y_pred = []
-    y_true = []
+    classes = ["1_3", "1_4"]
 
     for model, config in get_models():
+        class_correct = list(0. for _ in range(len(classes)))
+        class_total = list(0. for _ in range(len(classes)))
+        y_pred = []
+        y_true = []
+
+        path = "outputs\\1_3、1_4\\" + config["name"] + "\\model.pth"
         model = model.to(device)
         model = model.eval()
         model.load_state_dict(torch.load(path))
 
+        train_settings = config["train_settings"]
+        test_loader = train_settings["data_loader_function"][1](batch_size, num_workers)
+
         with torch.no_grad():
             for data in test_loader:
-                inputs, labels = [d.to(device) for d in data[0]], data[1].to(device)
-                pred = model(inputs)
+                inputs = [d.to(device) for d in data[0]] if type(data[0]) is list else data[0].to(device)
+                labels = data[1].to(device)
 
                 # 正解数をカウントする
+                pred = model(inputs)
                 _, pred = torch.max(pred.data, dim=1)
 
                 for i in range(len(labels)):
@@ -177,10 +178,10 @@ def predict():
                             # show_img(torchvision.utils.make_grid(images[i]))
                             print(f'Predicted: {classes[pred[i]]}, Label: {classes[labels[i]]}')
 
-    show_confusion_matrix(y_pred, y_true, classes)
-    print()
-    for i in range(len(classes)):
-        print('Accuracy of %5s : %2d %%' % (classes[i], 100 * class_correct[i] / class_total[i]))
+        show_confusion_matrix(y_pred, y_true, classes)
+        print()
+        for i in range(len(classes)):
+            print('Accuracy of %5s : %2d %%' % (classes[i], 100 * class_correct[i] / class_total[i]))
 
 
 # 画像の表示関数

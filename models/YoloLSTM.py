@@ -17,7 +17,7 @@ class YoloLSTM(nn.Module):
             nn.MaxPool2d(kernel_size=2, stride=2)
         )
         self.lstm = nn.LSTM(input_size=8192, hidden_size=2048, num_layers=2, batch_first=True)
-        self.fc = nn.Linear(2048, 3)
+        self.fc = nn.Linear(2048, 2)
 
     def forward(self, batch_i):
         batch_out = []
