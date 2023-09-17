@@ -4,7 +4,7 @@ import seaborn as sns
 from sklearn.metrics import confusion_matrix
 
 
-def show_confusion_matrix(y_pred, y_true, class_labels):
+def show_confusion_matrix(y_pred, y_true, class_labels, model_name):
     # Confusion Matrixを生成して正規化
     cm = confusion_matrix(y_true, y_pred)
     cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis] * 100
@@ -16,6 +16,7 @@ def show_confusion_matrix(y_pred, y_true, class_labels):
     for t in ax.texts:
         t.set_text(t.get_text() + " %")
 
+    plt.title(model_name)
     plt.xlabel('True Label')
     plt.ylabel('Predicted Label')
     plt.show()
