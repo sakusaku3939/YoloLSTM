@@ -1,13 +1,13 @@
 import torch.nn as nn
 import torch.optim as optim
 
-from helper.dataset_utils import load_cropped_image, load_image
+from helper.dataset_utils import load_cropped_image, load_image, load_test_image, load_cropped_test_image
 from models.GoogLeNet import calc_loss
 from models.validation_functions import get_classification_accuracy
 
 c = {
     "general": {
-        "num_epochs": 30,
+        "num_epochs": 20,
         "random_state": 111,
         "batch_size": 5,
         "num_workers": 2,
@@ -20,7 +20,7 @@ c = {
             "state": True,
             "checkpoint_resume": False,
             "train_settings": {
-                "data_loader_function": load_cropped_image,
+                "data_loader_function": (load_cropped_image, load_cropped_test_image),
                 "loss_function": nn.CrossEntropyLoss(),
                 "optimizer": optim.Adam,
                 "eval_function": get_classification_accuracy,
@@ -32,7 +32,7 @@ c = {
             "state": False,
             "checkpoint_resume": False,
             "train_settings": {
-                "data_loader_function": load_image,
+                "data_loader_function": (load_image, load_test_image),
                 "loss_function": calc_loss,
                 "optimizer": optim.Adam,
                 "eval_function": get_classification_accuracy,
@@ -44,21 +44,21 @@ c = {
             "state": False,
             "checkpoint_resume": False,
             "train_settings": {
-                "data_loader_function": load_image,
+                "data_loader_function": (load_image, load_test_image),
                 "loss_function": calc_loss,
                 "optimizer": optim.Adam,
                 "eval_function": get_classification_accuracy,
             },
             "param": {
-                "num_classes": 2
+                "num_classes": 6
             },
         },
         "SimpleCNN": {
             "name": "SimpleCNN",
-            "state": True,
+            "state": False,
             "checkpoint_resume": False,
             "train_settings": {
-                "data_loader_function": load_image,
+                "data_loader_function": (load_image, load_test_image),
                 "loss_function": nn.CrossEntropyLoss(),
                 "optimizer": optim.Adam,
                 "eval_function": get_classification_accuracy,
@@ -71,7 +71,6 @@ c = {
         "project": "ImageBasedLocalization_Classify",
         "config": {
             "learning_rate": 0.02,
-            "epochs": 12,
         }
     },
 }
