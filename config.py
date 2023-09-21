@@ -7,7 +7,7 @@ from models.validation_functions import get_classification_accuracy
 
 c = {
     "general": {
-        "num_epochs": 20,
+        "num_epochs": 25,
         "random_state": 111,
         "batch_size": 5,
         "num_workers": 2,
@@ -29,7 +29,7 @@ c = {
         },
         "CNNLSTM": {
             "name": "CNNLSTM",
-            "state": False,
+            "state": True,
             "checkpoint_resume": False,
             "train_settings": {
                 "data_loader_function": (load_image, load_test_image),
@@ -41,7 +41,7 @@ c = {
         },
         "GoogLeNet": {
             "name": "GoogLeNet",
-            "state": False,
+            "state": True,
             "checkpoint_resume": False,
             "train_settings": {
                 "data_loader_function": (load_image, load_test_image),
@@ -50,12 +50,12 @@ c = {
                 "eval_function": get_classification_accuracy,
             },
             "param": {
-                "num_classes": 6
+                "num_classes": 2
             },
         },
         "SimpleCNN": {
             "name": "SimpleCNN",
-            "state": False,
+            "state": True,
             "checkpoint_resume": False,
             "train_settings": {
                 "data_loader_function": (load_image, load_test_image),

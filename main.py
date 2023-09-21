@@ -138,7 +138,7 @@ def predict():
     num_workers = config_gen["num_workers"]
     device = init_device(config_gen)
 
-    classes = ["1_1", "2_11", "9_1", "9_12", "13_1", "13_12"]
+    classes = ["1_3", "1_4"]
 
     for model, config in get_models():
         class_correct = list(0. for _ in range(len(classes)))
@@ -146,7 +146,7 @@ def predict():
         y_pred = []
         y_true = []
 
-        path = "outputs\\20230917095448\\" + config["name"] + "\\model.pth"
+        path = "outputs\\20230920002119\\" + config["name"] + "\\model.pth"
         model = model.to(device)
         model = model.eval()
         model.load_state_dict(torch.load(path))
