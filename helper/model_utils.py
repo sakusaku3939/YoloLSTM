@@ -1,3 +1,4 @@
+from models.SimpleCNN import SimpleCNN
 from models.YoloLSTM import YoloLSTM
 from config import get_config
 import sys
@@ -6,6 +7,7 @@ sys.path.append('../')
 
 models = {
     "YoloLSTM": YoloLSTM,
+    "SimpleCNN": SimpleCNN,
 }
 
 

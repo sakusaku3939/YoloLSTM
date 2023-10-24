@@ -10,17 +10,15 @@ from PIL import Image
 from tqdm import tqdm
 from ultralytics import YOLO
 
-from config import get_config
-
 
 class CropDataset(Dataset):
-    def __init__(self, root, transform) -> None:
+    def __init__(self, root, transform, num_workers) -> None:
         super().__init__()
 
         # 初回実行の場合は、画像をYOLOでクロップする
         if not glob.glob(f"{root}/cropped_*"):
             for f in tqdm(glob.glob(f"{root}/*")):
-                crop_images(input_path=f, output_path=f"{root}/cropped_{os.path.split(f)[1]}")
+                crop_images(input_path=f, output_path=f"{root}/cropped_{os.path.split(f)[1]}", num_workers=num_workers)
 
         cropped_paths = glob.glob(f"{root}/cropped_*")
         self.dataset = []
@@ -62,8 +60,7 @@ class CropDataset(Dataset):
         return len(self.dataset)
 
 
-def crop_images(input_path, output_path):
-    num_workers = get_config("general")["num_workers"]
+def crop_images(input_path, output_path, num_workers):
     file_names = sorted(os.listdir(input_path))
 
     input_paths = [f"{input_path}/{f_name}" for f_name in file_names]
