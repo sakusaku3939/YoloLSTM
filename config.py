@@ -6,7 +6,7 @@ from helper.dataset_utils import load_cropped_image, load_image, load_test_image
 
 c = {
     "general": {
-        "num_epochs": 5,
+        "num_epochs": 20,
         "random_state": 111,
         "batch_size": 5,
         "num_workers": 2,
@@ -16,7 +16,7 @@ c = {
     "models": {
         "YoloLSTM": {
             "name": "YoloLSTM",
-            "state": False,
+            "state": True,
             "checkpoint_resume": False,
             "train_settings": {
                 "data_loader_function": (load_cropped_image, load_cropped_test_image),
@@ -28,7 +28,7 @@ c = {
         },
         "SimpleCNN": {
             "name": "SimpleCNN",
-            "state": True,
+            "state": False,
             "checkpoint_resume": False,
             "train_settings": {
                 "data_loader_function": (load_image, load_test_image),
