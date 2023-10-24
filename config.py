@@ -24,6 +24,17 @@ c = {
             },
             "param": {},
         },
+        "SimpleCNN": {
+            "name": "SimpleCNN",
+            "state": True,
+            "checkpoint_resume": False,
+            "train_settings": {
+                "loss_function": nn.MSELoss(),
+                "optimizer": optim.Adam,
+                "eval_function": get_r2_accuracy,
+            },
+            "param": {},
+        },
     },
     "wandb": {
         "state": True,
