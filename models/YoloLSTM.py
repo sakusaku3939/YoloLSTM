@@ -9,15 +9,15 @@ class YoloLSTM(nn.Module):
         self.param = param
 
         self.cnn = nn.Sequential(
-            nn.Conv2d(3, 16, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(3, 6, kernel_size=5),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2),
-            nn.Conv2d(16, 32, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(6, 12, kernel_size=5),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2)
         )
-        self.lstm = nn.LSTM(input_size=8192, hidden_size=2048, num_layers=2, batch_first=True)
-        self.fc = nn.Linear(2048, 2)
+        self.lstm = nn.LSTM(input_size=2028, hidden_size=2028, num_layers=1, batch_first=True, bidirectional=True)
+        self.fc = nn.Linear(2028, 2)
 
     def forward(self, batch_i):
         batch_out = []

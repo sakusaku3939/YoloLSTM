@@ -6,7 +6,7 @@ from helper.dataset_utils import load_cropped_image, load_image, load_test_image
 
 c = {
     "general": {
-        "num_epochs": 20,
+        "num_epochs": 30,
         "random_state": 111,
         "batch_size": 5,
         "num_workers": 2,
