@@ -16,6 +16,6 @@ def show_confusion_matrix(y_pred, y_true, class_labels):
     for t in ax.texts:
         t.set_text(t.get_text() + " %")
 
-    plt.xlabel('True Label')
-    plt.ylabel('Predicted Label')
+    plt.xlabel('Predicted Label')
+    plt.ylabel('True Label')
     plt.show()
