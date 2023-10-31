@@ -50,7 +50,7 @@ c = {
                 "eval_function": get_classification_accuracy,
             },
             "param": {
-                "num_classes": 2
+                "num_classes": 6
             },
         },
         "SimpleCNN": {

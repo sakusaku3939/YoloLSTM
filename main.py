@@ -138,7 +138,7 @@ def predict():
     num_workers = config_gen["num_workers"]
     device = init_device(config_gen)
 
-    classes = ["(1, 3)", "(1, 4)"]
+    classes = ["(0, 0)", "(1, 11)", "(9, 0)", "(9, 12)", "(13, 0)", "(13, 12)"]
 
     for model, config in get_models():
         class_correct = list(0. for _ in range(len(classes)))
