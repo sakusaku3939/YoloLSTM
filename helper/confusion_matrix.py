@@ -22,5 +22,7 @@ def show_confusion_matrix(y_pred, y_true, class_labels, model_name):
     plt.show()
 
     # F値を計算して表示
-    f1 = f1_score(y_true, y_pred, average="micro")
-    print(f"\nF1 score: {f1}")
+    micro_f1 = f1_score(y_true, y_pred, average="micro")
+    macro_f1 = f1_score(y_true, y_pred, average="macro")
+    print(f"\nmicro-F1 score: {micro_f1}")
+    print(f"macro-F1 score: {macro_f1}")
