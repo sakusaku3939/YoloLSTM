@@ -1,6 +1,7 @@
 import concurrent.futures
 import glob
 import os
+import re
 import itertools
 
 import torch
@@ -32,7 +33,9 @@ class CropDataset(Dataset):
                 for current_dir, sub_dirs, files_list in os.walk(f"{c_path}/{d_name}"):
                     for f_name in files_list:
                         file_paths.append(os.path.join(current_dir, f_name))
-                self.dataset.append({"label": i, "file_paths": file_paths})
+
+                position = [float(p) for p in re.findall(r'\d+', c_path)]
+                self.dataset.append({"target": position, "file_paths": file_paths})
 
         self.root = root
         self.transform = transform
@@ -50,8 +53,8 @@ class CropDataset(Dataset):
 
             images.append(img)
 
-        label = self.dataset[index]["label"]
-        return images, label
+        target = self.dataset[index]["target"]
+        return images, target
 
     def __len__(self):
         return len(self.dataset)

@@ -10,9 +10,7 @@ import random
 import numpy as np
 import ssl
 
-from helper.confusion_matrix import show_confusion_matrix
 from helper.model_utils import get_models
-
 from config import get_config
 
 ssl._create_default_https_context = ssl._create_unverified_context
@@ -87,12 +85,12 @@ def train():
 
             for i, data in tqdm(enumerate(train_loader, 0)):
                 inputs = [d.to(device) for d in data[0]] if type(data[0]) is list else data[0].to(device)
-                labels = data[1].to(device)
+                target = data[1].to(device)
 
                 optimizer.zero_grad()
                 outputs = model(inputs)
 
-                loss = loss_function(outputs, labels)
+                loss = loss_function(outputs, target)
                 loss.backward()
                 optimizer.step()
 
@@ -101,21 +99,27 @@ def train():
             # 各エポック後の検証
             with torch.no_grad():
                 model = model.eval()
-                running_score = 0.0
+                pred_list = []
+                target_list = []
 
                 for j, data in tqdm(enumerate(valid_loader, 0)):
                     inputs = [d.to(device) for d in data[0]] if type(data[0]) is list else data[0].to(device)
-                    labels = data[1].to(device)
+                    target = data[1].to(device)
 
                     pred = model(inputs)
-                    running_score += config["train_settings"]["eval_function"](pred, labels)
+                    pred_list.append(pred)
+                    target_list.append(target)
 
-            epoch_loss, epoch_score = running_loss / (i + 1), running_score / (j + 1)
-            wandb.log({"Epoch": epoch, "Loss": epoch_loss, "Score": epoch_score})
+            pred_list = torch.cat(pred_list)
+            target_list = torch.cat(target_list)
+            running_score = config["train_settings"]["eval_function"](pred_list, target_list)
+
+            epoch_loss = running_loss / (i + 1)
+            wandb.log({"Epoch": epoch, "Loss": epoch_loss, "Score": running_score})
             save_epoch, save_loss = epoch, running_loss
 
-            result = f"Loss: {epoch_loss}  Score: {epoch_score}\n"
-            results += ("Epoch:" + str(epoch) + "  " + f"Loss: {epoch_loss}  Score: {epoch_score}\n")
+            result = f"Loss: {epoch_loss}  Score: {running_score}\n"
+            results += ("Epoch:" + str(epoch) + "  " + f"Loss: {epoch_loss}  Score: {running_score}\n")
             print(result)
 
         # モデル学習完了後の保存処理
@@ -138,15 +142,9 @@ def predict():
     num_workers = config_gen["num_workers"]
     device = init_device(config_gen)
 
-    classes = ["(0, 0)", "(1, 11)", "(9, 0)", "(9, 12)", "(13, 0)", "(13, 12)"]
+    path = "outputs\\20230815140542\\YoloLSTM\\model.pth"
 
     for model, config in get_models():
-        class_correct = list(0. for _ in range(len(classes)))
-        class_total = list(0. for _ in range(len(classes)))
-        y_pred = []
-        y_true = []
-
-        path = "output\\" + config["name"] + "\\model.pth"
         model = model.to(device)
         model = model.eval()
         model.load_state_dict(torch.load(path))
@@ -154,34 +152,33 @@ def predict():
         train_settings = config["train_settings"]
         test_loader = train_settings["data_loader_function"][1](batch_size, num_workers)
 
+        loss_function = train_settings["loss_function"]
+        mae_function = nn.L1Loss()
+
         with torch.no_grad():
-            for data in test_loader:
-                inputs = [d.to(device) for d in data[0]] if type(data[0]) is list else data[0].to(device)
-                labels = data[1].to(device)
+            model = model.eval()
+            pred_list = []
+            target_list = []
+            running_loss = 0.0
 
-                # 正解数をカウントする
+            for j, data in tqdm(enumerate(test_loader, 0)):
+                inputs, target = [d.to(device) for d in data[0]], data[1].to(device)
                 pred = model(inputs)
-                _, pred = torch.max(pred.data, dim=1)
+                loss = loss_function(pred, target)
+                running_loss += loss.item()
 
-                for i in range(len(labels)):
-                    label = labels[i]
-                    class_correct[label] += (pred == labels).sum().item()
-                    class_total[label] += test_loader.batch_size
-                    y_pred.append(pred[i].item())
-                    y_true.append(label.item())
+                pred_list.append(pred)
+                target_list.append(target)
 
-                # 分類に失敗した画像を表示する
-                if (pred == labels).sum().item() != labels.size(0):
-                    for i in range(len(labels)):
-                        if pred[i] != labels[i]:
-                            images, labels = data
-                            # show_img(torchvision.utils.make_grid(images[i]))
-                            print(f'Predicted: {classes[pred[i]]}, Label: {classes[labels[i]]}')
+            pred_list = torch.cat(pred_list)
+            target_list = torch.cat(target_list)
+            running_score = config["train_settings"]["eval_function"](pred_list, target_list)
+            mean_error = mae_function(pred_list, target_list)
 
-        show_confusion_matrix(y_pred, y_true, classes, config["name"])
-        print()
-        for i in range(len(classes)):
-            print('Accuracy of %5s : %2d %%' % (classes[i], 100 * class_correct[i] / class_total[i]))
+            tile_width = 0.45  # 1タイルの長さ (m)
+            mean_error_text = f"{mean_error} / {tile_width * mean_error}m"
+
+            print(f"Loss: {running_loss / (j + 1)}  Score: {running_score}  Mean error: {mean_error_text}\n")
 
 
 # 画像の表示関数
@@ -193,5 +190,5 @@ def show_img(img):
 
 
 if __name__ == "__main__":
-    # train()
-    predict()
+    train()
+    # predict()

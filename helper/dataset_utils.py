@@ -1,9 +1,9 @@
 import torch
-import torchvision
 import torchvision.transforms as transforms
 import sys
 
 from helper.crop_dataset import CropDataset, collate_fn
+from helper.image_dataset import ImageDataset
 
 sys.path.append('../')
 
@@ -51,8 +51,8 @@ def load_image(batch_size, num_workers, random_state):
     ])
 
     # データセットの読み込み
-    train_set = torchvision.datasets.ImageFolder("./cnn_data/train", transform)
-    valid_set = torchvision.datasets.ImageFolder("./cnn_data/valid", transform)
+    train_set = ImageDataset("./cnn_data/train", transform)
+    valid_set = ImageDataset("./cnn_data/valid", transform)
 
     # 乱数シードの固定
     g = torch.Generator()
@@ -105,7 +105,7 @@ def load_test_image(batch_size, num_workers):
     ])
 
     # データセットの読み込み
-    dataset = torchvision.datasets.ImageFolder("./cnn_data/test", transform)
+    dataset = ImageDataset("./cnn_data/test", transform)
 
     test_loader = torch.utils.data.DataLoader(
         dataset,
