@@ -19,10 +19,10 @@ class YoloLSTM(nn.Module):
         self.lstm = nn.LSTM(input_size=2028, hidden_size=2028, num_layers=1, batch_first=True, bidirectional=True)
         self.fc = nn.Linear(2028, 2)
 
-    def forward(self, batch_i):
-        batch_out = []
+    def forward(self, crops_in):
+        crops_out = []
 
-        for x in batch_i:
+        for x in crops_in:
             crop_size, channels, height, width = x.size()
 
             # クロップ画像の処理
@@ -36,7 +36,7 @@ class YoloLSTM(nn.Module):
 
             # 2D座標を回帰
             x = self.fc(x)
-            batch_out.append(x)
+            crops_out.append(x)
 
-        batch_out = torch.stack(batch_out)
-        return batch_out
+        crops_out = torch.stack(crops_out)
+        return crops_out
