@@ -2,7 +2,7 @@ import os
 import shutil
 
 source_path = "./data/0627/"
-output_path = "./data/train/"
+output_path = "../data/train/"
 
 # X * y = 13 * 12
 # 推定で使用する座標を、撮影する順番（右下から左上）に記録
