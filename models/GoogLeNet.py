@@ -173,7 +173,7 @@ class BasicConv2d(nn.Module):
 
 
 def calc_loss(outputs, labels):
-    loss_function = nn.CrossEntropyLoss()
+    loss_function = nn.MSELoss()
 
     loss1 = loss_function(outputs[0], labels)
     loss2 = loss_function(outputs[1], labels)

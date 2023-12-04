@@ -1,13 +1,10 @@
 import os
 import shutil
 
-source_path = "./data/0627/"
-output_path = "./data/train/"
+from tools.pos_list import pos_list
 
-# X * y = 13 * 12
-# 推定で使用する座標を、撮影する順番（右下から左上）に記録
-pos_list = [range(1, 8), range(1, 12), range(6, 13), range(6, 8), range(6, 8), range(6, 8), range(6, 8), range(6, 8),
-            range(1, 13), range(6, 8), range(6, 8), range(6, 8), range(1, 13)]
+source_path = "./data/0627/"
+output_path = "../data/train/"
 
 file_names = iter(sorted(os.listdir(source_path)))
 

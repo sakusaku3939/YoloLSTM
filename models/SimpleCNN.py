@@ -23,9 +23,9 @@ class SimpleCNN(nn.Module):
         # 4. pool2の出力サイズ: (106 - 2 + 2 * 0) / 2 + 1 = 53
         o_size = 53
 
-        # input: 40(out_channels) * 53(height) * 53(width)
+        # input: 40チャンネル * 53(height) * 53(width)
         # output: 2クラスに分類
-        self.fc1 = nn.Linear(40 * o_size ^ 2, 120)
+        self.fc1 = nn.Linear(40 * o_size * o_size, 120)
         self.fc2 = nn.Linear(120, 84)
         self.fc3 = nn.Linear(84, 2)
 

@@ -2,8 +2,8 @@ import torch
 import torchvision.transforms as transforms
 import sys
 
-from helper.crop_dataset import CropDataset, collate_fn
-from helper.image_dataset import ImageDataset
+from datasets.crop_dataset import CropDataset, collate_fn
+from datasets.image_dataset import ImageDataset
 
 sys.path.append('../')
 
@@ -16,8 +16,8 @@ def load_cropped_image(batch_size, num_workers, random_state):
     ])
 
     # データセットの読み込み
-    train_set = CropDataset("data/train", transform, num_workers)
-    valid_set = CropDataset("data/valid", transform, num_workers)
+    train_set = CropDataset("data_all/train", transform, num_workers)
+    valid_set = CropDataset("data_all/valid", transform, num_workers)
 
     # 乱数シードの固定
     g = torch.Generator()
@@ -51,8 +51,8 @@ def load_image(batch_size, num_workers, random_state):
     ])
 
     # データセットの読み込み
-    train_set = ImageDataset("./cnn_data/train", transform)
-    valid_set = ImageDataset("./cnn_data/valid", transform)
+    train_set = ImageDataset("./cnn_data_all/train", transform)
+    valid_set = ImageDataset("./cnn_data_all/valid", transform)
 
     # 乱数シードの固定
     g = torch.Generator()
@@ -84,7 +84,7 @@ def load_cropped_test_image(batch_size, num_workers):
     ])
 
     # データセットの読み込み
-    dataset = CropDataset("data/test", transform, num_workers)
+    dataset = CropDataset("data_all/test", transform, num_workers)
 
     test_loader = torch.utils.data.DataLoader(
         dataset,
@@ -105,7 +105,7 @@ def load_test_image(batch_size, num_workers):
     ])
 
     # データセットの読み込み
-    dataset = ImageDataset("./cnn_data/test", transform)
+    dataset = ImageDataset("./cnn_data_all/test", transform)
 
     test_loader = torch.utils.data.DataLoader(
         dataset,

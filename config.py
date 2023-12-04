@@ -1,8 +1,9 @@
 import torch.nn as nn
 import torch.optim as optim
 
-from models.validation_functions import get_r2_accuracy
-from helper.dataset_utils import load_cropped_image, load_image, load_test_image, load_cropped_test_image
+from helper.validation_functions import get_r2_accuracy
+from datasets.dataset_utils import load_cropped_image, load_image, load_test_image, load_cropped_test_image
+from models.GoogLeNet import calc_loss
 
 c = {
     "general": {
@@ -26,9 +27,35 @@ c = {
             },
             "param": {},
         },
+        "CNNLSTM": {
+            "name": "CNNLSTM",
+            "state": True,
+            "checkpoint_resume": False,
+            "train_settings": {
+                "data_loader_function": (load_image, load_test_image),
+                "loss_function": calc_loss,
+                "optimizer": optim.Adam,
+                "eval_function": get_r2_accuracy,
+            },
+            "param": {},
+        },
+        "GoogLeNet": {
+            "name": "GoogLeNet",
+            "state": True,
+            "checkpoint_resume": False,
+            "train_settings": {
+                "data_loader_function": (load_image, load_test_image),
+                "loss_function": calc_loss,
+                "optimizer": optim.Adam,
+                "eval_function": get_r2_accuracy,
+            },
+            "param": {
+                "num_classes": 2
+            },
+        },
         "SimpleCNN": {
             "name": "SimpleCNN",
-            "state": False,
+            "state": True,
             "checkpoint_resume": False,
             "train_settings": {
                 "data_loader_function": (load_image, load_test_image),
@@ -44,7 +71,6 @@ c = {
         "project": "ImageBasedLocalization_Regress",
         "config": {
             "learning_rate": 0.02,
-            "epochs": 12,
         }
     },
 }
