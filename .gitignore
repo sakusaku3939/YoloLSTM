@@ -1,5 +1,7 @@
 /data
+/data_all
 /cnn_data
+/cnn_data_all
 /outputs
 /wandb
 yolov8x.pt
