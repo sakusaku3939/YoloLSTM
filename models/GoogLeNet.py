@@ -4,93 +4,55 @@ import torch.nn.functional as F
 
 
 class GoogLeNet(nn.Module):
-    def __init__(self, param):
+    def __init__(self):
         super().__init__()
 
-        num_classes = param["num_classes"]
-        aux_logits = True
-        dropout = 0.4
-        dropout_aux = 0.7
-
-        self.aux_logits = aux_logits
-
-        self.conv1 = BasicConv2d(3, 64, kernel_size=7, stride=2, padding=3)
-        self.maxpool1 = nn.MaxPool2d(3, stride=2, ceil_mode=True)
-        self.conv2 = BasicConv2d(64, 64, kernel_size=1)
-        self.conv3 = BasicConv2d(64, 192, kernel_size=3, padding=1)
-        self.maxpool2 = nn.MaxPool2d(3, stride=2, ceil_mode=True)
+        self.lrn = nn.LocalResponseNorm(5)
+        self.max_pool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+        self.conv1 = nn.Sequential(nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3), nn.ReLU())
+        self.conv2 = nn.Sequential(nn.Conv2d(64, 64, kernel_size=1), nn.ReLU(),
+                                   nn.Conv2d(64, 192, kernel_size=3, padding=1), nn.ReLU())
 
         self.inception3a = Inception(192, 64, 96, 128, 16, 32, 32)
         self.inception3b = Inception(256, 128, 128, 192, 32, 96, 64)
-        self.maxpool3 = nn.MaxPool2d(3, stride=2, ceil_mode=True)
 
         self.inception4a = Inception(480, 192, 96, 208, 16, 48, 64)
         self.inception4b = Inception(512, 160, 112, 224, 24, 64, 64)
         self.inception4c = Inception(512, 128, 128, 256, 24, 64, 64)
         self.inception4d = Inception(512, 112, 144, 288, 32, 64, 64)
         self.inception4e = Inception(528, 256, 160, 320, 32, 128, 128)
-        self.maxpool4 = nn.MaxPool2d(3, stride=2, ceil_mode=True)
 
         self.inception5a = Inception(832, 256, 160, 320, 32, 128, 128)
         self.inception5b = Inception(832, 384, 192, 384, 48, 128, 128)
 
-        if aux_logits:
-            self.aux1 = InceptionAux(512, num_classes, dropout=dropout_aux)
-            self.aux2 = InceptionAux(528, num_classes, dropout=dropout_aux)
-        else:
-            self.aux1 = None
-            self.aux2 = None
-
-        self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
-        self.dropout = nn.Dropout(p=dropout)
-        self.fc = nn.Linear(1024, num_classes)
-        self._initialize_weights()
-
-    def _initialize_weights(self):
-        for m in self.modules():
-            if isinstance(m, nn.Linear):
-                nn.init.kaiming_uniform_(m.weight, nonlinearity="linear")
-                if m.out_features == 1000:
-                    nn.init.zeros_(m.bias)  # 出力層は0で初期化する
-                else:
-                    nn.init.constant_(m.bias, 0.2)
-            if isinstance(m, nn.Conv2d) or isinstance(m, nn.Linear):
-                nn.init.kaiming_uniform_(m.weight, nonlinearity="conv2d")
-
     def forward(self, x):
-        x = self.conv1(x)  # (N, 64, 112, 112)
-        x = self.maxpool1(x)  # (N, 64, 56, 56)
-        x = self.conv2(x)  # (N, 64, 56, 56)
-        x = self.conv3(x)  # (N, 192, 56, 56)
-        x = self.maxpool2(x)  # (N, 192, 28, 28)
-        x = self.inception3a(x)  # (N, 256, 28, 28)
-        x = self.inception3b(x)  # (N, 480, 28, 28)
-        x = self.maxpool3(x)  # (N, 480, 14, 14)
-        x = self.inception4a(x)  # (N, 512, 14, 14)
+        x = self.conv1(x)
+        x = self.max_pool(x)
+        x = self.lrn(x)
+        x = self.conv2(x)
+        x = self.lrn(x)
+        x = self.max_pool(x)
+        x = self.inception3a(x)
+        x = self.inception3b(x)
+        x = self.max_pool(x)
+        x = self.inception4a(x)
+        aux1 = x
 
-        aux1 = self.aux1(x) if self.aux_logits and self.training else None
+        x = self.inception4b(x)
+        x = self.inception4c(x)
+        x = self.inception4d(x)
+        aux2 = x
 
-        x = self.inception4b(x)  # (N, 512, 14, 14)
-        x = self.inception4c(x)  # (N, 512, 14, 14)
-        x = self.inception4d(x)  # (N, 528, 14, 14)
+        x = self.inception4e(x)
+        x = self.max_pool(x)
+        x = self.inception5a(x)
+        x = self.inception5b(x)
+        aux3 = x
 
-        aux2 = self.aux2(x) if self.aux_logits and self.training else None
+        if self.training:
+            return aux1, aux2, aux3
 
-        x = self.inception4e(x)  # (N, 832, 14, 14)
-        x = self.maxpool4(x)  # (N, 832, 7, 7)
-
-        x = self.inception5a(x)  # (N, 832, 7, 7)
-        x = self.inception5b(x)  # (N, 1024, 7, 7)
-
-        x = self.avgpool(x)  # (N, 1024, 1, 1)
-        x = torch.flatten(x, 1)  # (N, 1024)
-        x = self.dropout(x)
-        x = self.fc(x)  # (N, 1000)
-
-        if self.aux_logits and self.training:
-            return aux1, aux2, x
-        else:
-            return x
+        return aux3
 
 
 class Inception(nn.Module):
