@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-from models.GoogLeNet import GoogLeNet
+from models.base.GoogLeNet import GoogLeNet
 
 """
 MIT License
@@ -18,12 +18,12 @@ https://github.com/GrumpyZhou/visloc-apr
 """
 
 
-class CNNLSTM(nn.Module):
+class PoseLSTM(nn.Module):
     def __init__(self, param):
-        super(CNNLSTM, self).__init__()
+        super(PoseLSTM, self).__init__()
         self.param = param
 
-        self.extract = GoogLeNet(param={"num_classes": 1024})
+        self.extract = GoogLeNet()
         self.regress1 = Regression('regress1')
         self.regress2 = Regression('regress2')
         self.regress3 = Regression('regress3')
@@ -41,16 +41,28 @@ class CNNLSTM(nn.Module):
 class Regression(nn.Module):
     def __init__(self, regid):
         super(Regression, self).__init__()
-        self.regress_fc_pose = nn.Sequential(nn.Linear(1024, 2048), nn.ReLU())
-        self.lstm4dir = FourDirectionalLSTM(seq_size=32, origin_feat_size=2048, hidden_size=256)
-        self.regress_lstm4d = nn.Sequential(self.lstm4dir, nn.Dropout(0.5))
-        self.regress_fc_xyz = nn.Linear(1024, 2)
+        conv_in = {"regress1": 512, "regress2": 528}
+        if regid != "regress3":
+            self.projection = nn.Sequential(nn.AvgPool2d(kernel_size=5, stride=3),
+                                            nn.Conv2d(conv_in[regid], 128, kernel_size=1),
+                                            nn.ReLU())
+            self.regress_fc_pose = nn.Sequential(nn.Linear(2048, 1024), nn.ReLU())
+            self.lstm4dir = FourDirectionalLSTM(seq_size=32, origin_feat_size=1024, hidden_size=256)
+            self.regress_lstm4d = nn.Sequential(self.lstm4dir, nn.Dropout(0.7))
+            self.regress_fc_xy = nn.Linear(1024, 2)
+        else:
+            self.projection = nn.AvgPool2d(kernel_size=7, stride=1)
+            self.regress_fc_pose = nn.Sequential(nn.Linear(1024, 2048), nn.ReLU())
+            self.lstm4dir = FourDirectionalLSTM(seq_size=32, origin_feat_size=2048, hidden_size=256)
+            self.regress_lstm4d = nn.Sequential(self.lstm4dir, nn.Dropout(0.5))
+            self.regress_fc_xy = nn.Linear(1024, 2)
 
     def forward(self, x):
-        x = self.regress_fc_pose(x)
+        x = self.projection(x)
+        x = self.regress_fc_pose(x.view(x.size(0), -1))
         x = self.regress_lstm4d(x)
-        xyz = self.regress_fc_xyz(x)
-        return xyz
+        xy = self.regress_fc_xy(x)
+        return xy
 
 
 class FourDirectionalLSTM(nn.Module):

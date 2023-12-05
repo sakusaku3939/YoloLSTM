@@ -3,7 +3,7 @@ import torch.optim as optim
 
 from helper.validation_functions import get_r2_accuracy
 from datasets.dataset_utils import load_cropped_image, load_image, load_test_image, load_cropped_test_image
-from models.GoogLeNet import calc_loss
+from models.base.GoogLeNet import calc_loss
 
 c = {
     "general": {
@@ -27,9 +27,9 @@ c = {
             },
             "param": {},
         },
-        "CNNLSTM": {
-            "name": "CNNLSTM",
-            "state": True,
+        "PoseLSTM": {
+            "name": "PoseLSTM",
+            "state": False,
             "checkpoint_resume": False,
             "train_settings": {
                 "data_loader_function": (load_image, load_test_image),
@@ -39,9 +39,9 @@ c = {
             },
             "param": {},
         },
-        "GoogLeNet": {
-            "name": "GoogLeNet",
-            "state": True,
+        "PoseNet": {
+            "name": "PoseNet",
+            "state": False,
             "checkpoint_resume": False,
             "train_settings": {
                 "data_loader_function": (load_image, load_test_image),
@@ -49,13 +49,11 @@ c = {
                 "optimizer": optim.Adam,
                 "eval_function": get_r2_accuracy,
             },
-            "param": {
-                "num_classes": 2
-            },
+            "param": {},
         },
         "SimpleCNN": {
             "name": "SimpleCNN",
-            "state": True,
+            "state": False,
             "checkpoint_resume": False,
             "train_settings": {
                 "data_loader_function": (load_image, load_test_image),
