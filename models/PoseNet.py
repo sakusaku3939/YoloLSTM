@@ -1,6 +1,6 @@
 import torch.nn as nn
 
-from models.GoogLeNet import GoogLeNet
+from models.base.GoogLeNet import GoogLeNet
 
 """
 MIT License

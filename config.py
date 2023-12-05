@@ -3,7 +3,7 @@ import torch.optim as optim
 
 from helper.validation_functions import get_r2_accuracy
 from datasets.dataset_utils import load_cropped_image, load_image, load_test_image, load_cropped_test_image
-from models.GoogLeNet import calc_loss
+from models.base.GoogLeNet import calc_loss
 
 c = {
     "general": {
