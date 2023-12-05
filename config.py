@@ -1,9 +1,9 @@
 import torch.nn as nn
 import torch.optim as optim
 
-from helper.dataset_utils import load_cropped_image, load_image, load_test_image, load_cropped_test_image
-from models.GoogLeNet import calc_loss
 from models.validation_functions import get_classification_accuracy
+from helper.dataset_utils import load_cropped_image, load_image, load_test_image, load_cropped_test_image
+from models.base.GoogLeNet import calc_loss
 
 c = {
     "general": {
