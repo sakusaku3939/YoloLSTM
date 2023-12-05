@@ -1,5 +1,5 @@
-from models.CNNLSTM import CNNLSTM
-from models.GoogLeNet import GoogLeNet
+from models.PoseLSTM import PoseLSTM
+from models.PoseNet import PoseNet
 from models.SimpleCNN import SimpleCNN
 from models.YoloLSTM import YoloLSTM
 from config import get_config
@@ -9,8 +9,8 @@ sys.path.append('../')
 
 models = {
     "YoloLSTM": YoloLSTM,
-    "CNNLSTM": CNNLSTM,
-    "GoogLeNet": GoogLeNet,
+    "PoseLSTM": PoseLSTM,
+    "PoseNet": PoseNet,
     "SimpleCNN": SimpleCNN,
 }
 
