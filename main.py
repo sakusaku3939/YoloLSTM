@@ -54,7 +54,7 @@ def train():
     for model, config in get_models():
         os.makedirs(f"outputs/{now}/" + config["name"])
         wandb.init(project=config_wandb["project"], config=config_wandb["config"],
-                   mode="online" if config_wandb["state"] else "disabled", resume=config["checkpoint_resume"])
+                   mode="online" if config_wandb["state"] else "disabled", resume=config_gen["checkpoint_resume"])
         model = model.to(device)
 
         train_settings = config["train_settings"]
@@ -65,7 +65,7 @@ def train():
 
         # チェックポイントから学習を再開
         checkpoint_epoch = 1
-        if config["checkpoint_resume"]:
+        if config_gen["checkpoint_resume"]:
             path = "outputs\\20230808161130\\YoloLSTM\\training_state.pt"
             checkpoint = torch.load(path)
             model.load_state_dict(checkpoint['model_state_dict'])
