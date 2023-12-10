@@ -12,13 +12,17 @@ c = {
         "batch_size": 5,
         "num_workers": 2,
         "device": "cuda",
+        "checkpoint_resume": False,
     },
-    "data": {},
+    "wandb": {
+        "state": False,
+        "project": "ImageBasedLocalization_Regress",
+        "config": {}
+    },
     "models": {
         "YoloLSTM": {
-            "name": "YoloLSTM",
             "state": True,
-            "checkpoint_resume": False,
+            "name": "YoloLSTM",
             "train_settings": {
                 "data_loader_function": (load_cropped_image, load_cropped_test_image),
                 "loss_function": nn.CrossEntropyLoss(),
@@ -28,9 +32,8 @@ c = {
             "param": {},
         },
         "PoseLSTM": {
-            "name": "PoseLSTM",
             "state": False,
-            "checkpoint_resume": False,
+            "name": "PoseLSTM",
             "train_settings": {
                 "data_loader_function": (load_image, load_test_image),
                 "loss_function": calc_loss,
@@ -40,9 +43,8 @@ c = {
             "param": {},
         },
         "PoseNet": {
-            "name": "PoseNet",
             "state": False,
-            "checkpoint_resume": False,
+            "name": "PoseNet",
             "train_settings": {
                 "data_loader_function": (load_image, load_test_image),
                 "loss_function": calc_loss,
@@ -52,9 +54,8 @@ c = {
             "param": {},
         },
         "SimpleCNN": {
-            "name": "SimpleCNN",
             "state": False,
-            "checkpoint_resume": False,
+            "name": "SimpleCNN",
             "train_settings": {
                 "data_loader_function": (load_image, load_test_image),
                 "loss_function": nn.CrossEntropyLoss(),
@@ -63,13 +64,6 @@ c = {
             },
             "param": {},
         },
-    },
-    "wandb": {
-        "state": True,
-        "project": "ImageBasedLocalization_Classify",
-        "config": {
-            "learning_rate": 0.02,
-        }
     },
 }
 
