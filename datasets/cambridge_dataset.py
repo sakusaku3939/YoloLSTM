@@ -2,11 +2,11 @@ import os
 import numpy as np
 from PIL import Image
 import torch
-import torch.utils.data as data
+from torch.utils.data import Dataset
 
 
-class CambridgeDataset(data.Dataset):
-    def __init__(self, root, dataset_name, txt_path, transform=None):
+class CambridgeDataset(Dataset):
+    def __init__(self, root, dataset_name, txt_path, transform):
         self.transform = transform
 
         self.pose_txt = os.path.join(root, dataset_name, txt_path)
