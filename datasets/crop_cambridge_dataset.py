@@ -19,49 +19,56 @@ class CropCambridgeDataset(Dataset):
         self.transform = transform
 
         self.pose_txt = os.path.join(root, dataset_name, txt_path)
-        self.img_paths, self.positions = parse_txt(self.pose_txt)
+        img_paths, self.positions = parse_txt(self.pose_txt)
         self.data_dir = os.path.join(root, dataset_name)
 
-        input_paths, output_paths, names = [], [], []
-        for path in self.img_paths:
+        # クロップ画像のパスに変換する
+        all_paths = []
+        crop_queue = []
+        for path in img_paths:
             dir_name, f_name = path.split("/")
-            # ディレクトリが存在しない場合、YOLOでクロップするキューに追加する
-            if not os.path.isdir(os.path.join(self.data_dir, f"cropped_{dir_name}", os.path.splitext(f_name)[0])):
-                input_paths.append(os.path.join(self.data_dir, path))
-                output_paths.append(os.path.join(self.data_dir, f"cropped_{dir_name}"))
-                names.append(os.path.splitext(f_name)[0])
+            name = os.path.splitext(f_name)[0]
 
-        crop_images(input_paths=input_paths, output_paths=output_paths, names=names)
+            input_path = os.path.join(self.data_dir, path)
+            output_path = os.path.join(self.data_dir, f"cropped_{dir_name}")
+            all_paths.append((input_path, output_path, name))
 
-        # cropped_paths = glob.glob(f"{root}/cropped_*")
-        # self.dataset = []
-        #
-        # # datasetにラベルと画像パスを追加
-        # for i, c_path in enumerate(cropped_paths):
-        #     dir_names = sorted(os.listdir(c_path))
-        #     for d_name in dir_names:
-        #         file_paths = []
-        #
-        #         # ディレクトリ配下にあるクロップ画像のパスを取得
-        #         for current_dir, sub_dirs, files_list in os.walk(f"{c_path}/{d_name}"):
-        #             for f_name in files_list:
-        #                 file_paths.append(os.path.join(current_dir, f_name))
-        #
-        #         position = [float(p) for p in re.findall(r'\d+', c_path)]
-        #         self.dataset.append({"xy": position, "paths": file_paths})
+            # ディレクトリが存在しない場合、YOLOでクロップするキューにも追加する
+            if not os.path.isdir(os.path.join(output_path, name)):
+                crop_queue.append((input_path, output_path, name))
+
+        if len(crop_queue) > 0:
+            crop_images(input_paths=crop_queue[0], output_paths=crop_queue[1], names=crop_queue[2])
+
+        # ディレクトリ配下にあるクロップ画像のパスを取得
+        self.img_paths = []
+        for i, data in enumerate(all_paths):
+            input_path, output_path, name = data
+            file_paths = []
+            for current_dir, sub_dirs, files_list in os.walk(os.path.join(output_path, name)):
+                for f_name in files_list:
+                    file_paths.append(os.path.join(current_dir, f_name))
+
+            self.img_paths.append(file_paths)
 
     def __getitem__(self, index):
-        img_path = self.img_paths[index]
-        img = Image.open(os.path.join(self.data_dir, img_path))
+        file_paths = self.img_paths[index]
+        images = []
 
-        if self.transform is not None:
-            img = self.transform(img)
+        for f_path in file_paths:
+            img = Image.open(os.path.join(self.data_dir, f_path))
+
+            # 画像を前処理
+            if self.transform is not None:
+                img = self.transform(img)
+
+            images.append(img)
 
         xy = self.positions[index]
-        return img, torch.tensor(xy)
+        return images, xy
 
     def __len__(self):
-        return len(self.img_paths)
+        return len(self.positions)
 
 
 def crop_images(input_paths, output_paths, names):
