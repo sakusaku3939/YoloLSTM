@@ -92,7 +92,7 @@ def collate_fn(batch_list):
     label_list = [data[1] for data in batch_list]
 
     # batchリストを1つのTensorにまとめる
-    images = [torch.stack(batch) for batch in images_list]
-    labels = torch.tensor(label_list)
+    images = [torch.stack(cropped if len(cropped) > 0 else [torch.ones(3, 64, 64)]) for cropped in images_list]
+    labels = torch.tensor(np.array(label_list))
 
     return images, labels
