@@ -3,7 +3,7 @@ import torchvision.transforms as transforms
 import sys
 
 from datasets.cambridge_dataset import CambridgeDataset
-from datasets.crop_dataset import CropDataset, collate_fn
+from datasets.crop_cambridge_dataset import CropCambridgeDataset, collate_fn
 from datasets.image_dataset import ImageDataset
 
 sys.path.append('../')
@@ -17,8 +17,18 @@ def load_cropped_image(batch_size, num_workers, random_state):
     ])
 
     # データセットの読み込み
-    train_set = CropDataset("data_all/train", transform, num_workers)
-    valid_set = CropDataset("data_all/valid", transform, num_workers)
+    train_set = CropCambridgeDataset(
+        "D:/LocalizationDatasets/CambridgeLandmarks",
+        "ShopFacade",
+        "dataset_train.txt",
+        transform,
+    )
+    valid_set = CropCambridgeDataset(
+        "D:/LocalizationDatasets/CambridgeLandmarks",
+        "ShopFacade",
+        "dataset_test.txt",
+        transform,
+    )
 
     # 乱数シードの固定
     g = torch.Generator()
@@ -52,10 +62,18 @@ def load_image(batch_size, num_workers, random_state):
     ])
 
     # データセットの読み込み
-    # train_set = ImageDataset("./cnn_data_all/train", transform)
-    # valid_set = ImageDataset("./cnn_data_all/valid", transform)
-    train_set = CambridgeDataset("D:/visloc-apr/data/CambridgeLandmarks", "ShopFacade", "dataset_train.txt", transform)
-    valid_set = CambridgeDataset("D:/visloc-apr/data/CambridgeLandmarks", "ShopFacade", "dataset_test.txt", transform)
+    train_set = CambridgeDataset(
+        "D:/LocalizationDatasets/CambridgeLandmarks",
+        "ShopFacade",
+        "dataset_train.txt",
+        transform,
+    )
+    valid_set = CambridgeDataset(
+        "D:/LocalizationDatasets/CambridgeLandmarks",
+        "ShopFacade",
+        "dataset_test.txt",
+        transform,
+    )
 
     # 乱数シードの固定
     g = torch.Generator()
