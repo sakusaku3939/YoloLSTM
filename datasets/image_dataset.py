@@ -8,7 +8,7 @@ from PIL import Image
 
 
 class ImageDataset(Dataset):
-    def __init__(self, root, transform=None):
+    def __init__(self, root, transform):
         super().__init__()
         self.dataset = []
 

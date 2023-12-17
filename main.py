@@ -25,6 +25,8 @@ torch.backends.cudnn.benchmark = False
 torch.backends.cudnn.deterministic = True
 os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":16:8"
 
+tile_width = 0.45  # 1タイルの長さ (m)
+
 
 # GPUデバイスの設定
 def init_device(config_gen):
@@ -59,9 +61,11 @@ def train():
 
         train_settings = config["train_settings"]
         loss_function = train_settings["loss_function"]
+        mae_function = nn.L1Loss()
         optimizer = train_settings["optimizer"](model.parameters())
         train_loader, valid_loader = train_settings["data_loader_function"][0](batch_size, num_workers, random_state)
         results = ""
+        accuracy_result = 0.0
 
         # チェックポイントから学習を再開
         checkpoint_epoch = 1
@@ -113,6 +117,7 @@ def train():
             pred_list = torch.cat(pred_list)
             target_list = torch.cat(target_list)
             running_score = config["train_settings"]["eval_function"](pred_list, target_list)
+            accuracy_result = mae_function(pred_list, target_list)
 
             epoch_loss = running_loss / (i + 1)
             wandb.log({"Epoch": epoch, "Loss": epoch_loss, "Score": running_score})
@@ -121,6 +126,9 @@ def train():
             result = f"Loss: {epoch_loss}  Score: {running_score}\n"
             results += ("Epoch:" + str(epoch) + "  " + f"Loss: {epoch_loss}  Score: {running_score}\n")
             print(result)
+
+        print(f"Accuracy: {tile_width * accuracy_result}m\n")
+        results += f"Accuracy: {tile_width * accuracy_result}m"
 
         # モデル学習完了後の保存処理
         out_dir = f"outputs/{now}/" + config["name"] + "/"
@@ -132,6 +140,7 @@ def train():
         with open(out_dir + "results.txt", "w") as file:
             file.write(results)
         wandb.finish()
+
         print("Training finished")
 
 
@@ -175,10 +184,8 @@ def predict():
             running_score = config["train_settings"]["eval_function"](pred_list, target_list)
             mean_error = mae_function(pred_list, target_list)
 
-            tile_width = 0.45  # 1タイルの長さ (m)
-            mean_error_text = f"{mean_error} / {tile_width * mean_error}m"
-
-            print(f"Loss: {running_loss / (j + 1)}  Score: {running_score}  Mean error: {mean_error_text}\n")
+            print(f"Loss: {running_loss / (j + 1)}  Score: {running_score}\n")
+            print(f"Accuracy: {tile_width * mean_error}m")
 
 
 # 画像の表示関数

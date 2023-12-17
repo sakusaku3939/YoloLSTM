@@ -2,7 +2,6 @@ import torch
 import torchvision.transforms as transforms
 import sys
 
-from datasets.cambridge_dataset import CambridgeDataset
 from datasets.crop_dataset import CropDataset, collate_fn
 from datasets.image_dataset import ImageDataset
 
@@ -52,10 +51,8 @@ def load_image(batch_size, num_workers, random_state):
     ])
 
     # データセットの読み込み
-    # train_set = ImageDataset("./cnn_data_all/train", transform)
-    # valid_set = ImageDataset("./cnn_data_all/valid", transform)
-    train_set = CambridgeDataset("D:/visloc-apr/data/CambridgeLandmarks", "ShopFacade", "dataset_train.txt", transform)
-    valid_set = CambridgeDataset("D:/visloc-apr/data/CambridgeLandmarks", "ShopFacade", "dataset_test.txt", transform)
+    train_set = ImageDataset("./cnn_data_all/train", transform)
+    valid_set = ImageDataset("./cnn_data_all/valid", transform)
 
     # 乱数シードの固定
     g = torch.Generator()
