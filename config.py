@@ -7,16 +7,16 @@ from models.base.GoogLeNet import calc_loss
 
 c = {
     "general": {
-        "num_epochs": 10,
+        "num_epochs": 30,
         "random_state": 111,
-        "batch_size": 5,
+        "batch_size": 15,
         "num_workers": 2,
         "device": "cuda",
         "checkpoint_resume": False,
     },
     "wandb": {
-        "state": False,
-        "project": "ImageBasedLocalization_Regress",
+        "state": True,
+        "project": "ImageBasedLocalization_Cambridge",
         "config": {}
     },
     "models": {
