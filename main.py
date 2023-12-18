@@ -25,8 +25,6 @@ torch.backends.cudnn.benchmark = False
 torch.backends.cudnn.deterministic = True
 os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":16:8"
 
-tile_width = 0.45  # 1タイルの長さ (m)
-
 
 # GPUデバイスの設定
 def init_device(config_gen):
@@ -127,8 +125,8 @@ def train():
             results += ("Epoch:" + str(epoch) + "  " + f"Loss: {epoch_loss}  Score: {running_score}\n")
             print(result)
 
-        print(f"Accuracy: {tile_width * accuracy_result}m\n")
-        results += f"Accuracy: {tile_width * accuracy_result}m"
+        print(f"Accuracy: {accuracy_result}m\n")
+        results += f"Accuracy: {accuracy_result}m"
 
         # モデル学習完了後の保存処理
         out_dir = f"outputs/{now}/" + config["name"] + "/"
@@ -185,7 +183,7 @@ def predict():
             mean_error = mae_function(pred_list, target_list)
 
             print(f"Loss: {running_loss / (j + 1)}  Score: {running_score}\n")
-            print(f"Accuracy: {tile_width * mean_error}m")
+            print(f"Accuracy: {mean_error}m")
 
 
 # 画像の表示関数
