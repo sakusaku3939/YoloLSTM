@@ -1,8 +1,5 @@
 import concurrent.futures
-import glob
 import os
-import re
-import itertools
 
 import numpy as np
 from PIL import Image
