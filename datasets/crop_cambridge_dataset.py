@@ -24,7 +24,7 @@ class CropCambridgeDataset(Dataset):
 
         # クロップ画像のパスに変換する
         all_paths = []
-        crop_queue = []
+        crop_input_queue, crop_output_queue, crop_name_queue = [], [], []
         for path in img_paths:
             dir_name, f_name = path.split("/")
             name = os.path.splitext(f_name)[0]
@@ -35,10 +35,12 @@ class CropCambridgeDataset(Dataset):
 
             # ディレクトリが存在しない場合、YOLOでクロップするキューにも追加する
             if not os.path.isdir(os.path.join(output_path, name)):
-                crop_queue.append((input_path, output_path, name))
+                crop_input_queue.append(input_path)
+                crop_output_queue.append(output_path)
+                crop_name_queue.append(name)
 
-        if len(crop_queue) > 0:
-            crop_images(input_paths=crop_queue[0], output_paths=crop_queue[1], names=crop_queue[2])
+        if len(crop_input_queue) > 0:
+            crop_images(input_paths=crop_input_queue, output_paths=crop_output_queue, names=crop_name_queue)
 
         # ディレクトリ配下にあるクロップ画像のパスを取得
         self.img_paths = []
@@ -75,9 +77,8 @@ def crop_images(input_paths, output_paths, names):
     with concurrent.futures.ProcessPoolExecutor(max_workers=5) as executor:
         list(tqdm(
             executor.map(yolo, input_paths, output_paths, names),
-            total=len(names)
+            total=len(names),
         ))
-        executor.shutdown(wait=True)
 
 
 def yolo(input_path, output_path, name):
