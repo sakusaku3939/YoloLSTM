@@ -65,7 +65,8 @@ def train():
         optimizer = train_settings["optimizer"](model.parameters())
         train_loader, valid_loader = train_settings["data_loader_function"][0](batch_size, num_workers, random_state)
         results = ""
-        accuracy_result = 0.0
+        best_score, best_accuracy = 0.0, 0.0
+        best_model_state = None
 
         # チェックポイントから学習を再開
         checkpoint_epoch = 1
@@ -123,15 +124,25 @@ def train():
             wandb.log({"Epoch": epoch, "Loss": epoch_loss, "Score": running_score})
             save_epoch, save_loss = epoch, running_loss
 
+            # 最高パフォーマンスの更新
+            if running_score >= best_score:
+                best_score = running_score
+                best_accuracy = accuracy_result
+                best_model_state = model.state_dict().copy()
+
             result = f"Loss: {epoch_loss}  Score: {running_score}\n"
             results += ("Epoch:" + str(epoch) + "  " + f"Loss: {epoch_loss}  Score: {running_score}\n")
             print(result)
 
-        print(f"Accuracy: {tile_width * accuracy_result}m\n")
-        results += f"Accuracy: {tile_width * accuracy_result}m"
+        # 最高パフォーマンスのモデルを保存
+        out_dir = f"outputs/{now}/" + config["name"] + "/"
+        if best_model_state is not None:
+            torch.save(best_model_state, out_dir + "best_model.pth")
+            result = f"Best score: {best_score}, Best accuracy: {tile_width * best_accuracy}m"
+            results += "\n" + result
+            print(result)
 
         # モデル学習完了後の保存処理
-        out_dir = f"outputs/{now}/" + config["name"] + "/"
         torch.save(model.state_dict(), out_dir + "model.pth")
         if config_wandb["state"]:
             torch.save({'epoch': save_epoch, 'model_state_dict': model.state_dict(),
@@ -139,9 +150,9 @@ def train():
                        out_dir + "training_state.pt")
         with open(out_dir + "results.txt", "w") as file:
             file.write(results)
-        wandb.finish()
 
-        print("Training finished")
+        wandb.finish()
+        print("Training finished\n")
 
 
 def predict():
