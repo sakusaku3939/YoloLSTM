@@ -9,6 +9,7 @@ import wandb
 import random
 import numpy as np
 import ssl
+import copy
 
 from helper.model_utils import get_models
 from config import get_config
@@ -125,10 +126,10 @@ def train():
             save_epoch, save_loss = epoch, running_loss
 
             # 最高パフォーマンスの更新
-            if running_score >= best_score:
+            if epoch >= 8 and running_score >= best_score:
                 best_score = running_score
                 best_accuracy = accuracy_result
-                best_model_state = model.state_dict().copy()
+                best_model_state = copy.deepcopy(model.state_dict())
 
             result = f"Loss: {epoch_loss}  Score: {running_score}\n"
             results += ("Epoch:" + str(epoch) + "  " + f"Loss: {epoch_loss}  Score: {running_score}\n")
