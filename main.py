@@ -163,7 +163,7 @@ def predict():
     num_workers = config_gen["num_workers"]
     device = init_device(config_gen)
 
-    path = "outputs\\20230815140542\\YoloLSTM\\model.pth"
+    path = "outputs\\20240114220707\\YoloLSTM\\model.pth"
 
     for model, config in get_models():
         model = model.to(device)
@@ -183,7 +183,9 @@ def predict():
             running_loss = 0.0
 
             for j, data in tqdm(enumerate(test_loader, 0)):
-                inputs, target = [d.to(device) for d in data[0]], data[1].to(device)
+                inputs = [d.to(device) for d in data[0]] if type(data[0]) is list else data[0].to(device)
+                target = data[1].to(device)
+
                 pred = model(inputs)
                 loss = loss_function(pred, target)
                 running_loss += loss.item()
