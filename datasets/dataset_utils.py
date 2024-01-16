@@ -3,7 +3,7 @@ import torchvision
 import torchvision.transforms as transforms
 import sys
 
-from helper.crop_dataset import CropDataset, collate_fn
+from datasets.crop_dataset import CropDataset, collate_fn
 
 sys.path.append('../')
 

@@ -1,6 +1,5 @@
 import torch
 import matplotlib.pyplot as plt
-from torch import nn
 
 from tqdm import tqdm
 import os
@@ -9,6 +8,7 @@ import wandb
 import random
 import numpy as np
 import ssl
+import copy
 
 from helper.confusion_matrix import show_confusion_matrix
 from helper.model_utils import get_models
@@ -64,6 +64,8 @@ def train():
         optimizer = train_settings["optimizer"](model.parameters())
         train_loader, valid_loader = train_settings["data_loader_function"][0](batch_size, num_workers, random_state)
         results = ""
+        best_score = 0.0
+        best_model_state = None
 
         # チェックポイントから学習を再開
         checkpoint_epoch = 1
@@ -114,12 +116,24 @@ def train():
             wandb.log({"Epoch": epoch, "Loss": epoch_loss, "Score": epoch_score})
             save_epoch, save_loss = epoch, running_loss
 
+            # 最高パフォーマンスの更新
+            if epoch >= 8 and epoch_score >= best_score:
+                best_score = epoch_score
+                best_model_state = copy.deepcopy(model.state_dict())
+
             result = f"Loss: {epoch_loss}  Score: {epoch_score}\n"
             results += ("Epoch:" + str(epoch) + "  " + f"Loss: {epoch_loss}  Score: {epoch_score}\n")
             print(result)
 
-        # モデル学習完了後の保存処理
+        # 最高パフォーマンスのモデルを保存
         out_dir = f"outputs/{now}/" + config["name"] + "/"
+        if best_model_state is not None:
+            torch.save(best_model_state, out_dir + "best_model.pth")
+            result = f"Best score: {best_score}"
+            results += "\n" + result
+            print(result)
+
+        # モデル学習完了後の保存処理
         torch.save(model.state_dict(), out_dir + "model.pth")
         if config_wandb["state"]:
             torch.save({'epoch': save_epoch, 'model_state_dict': model.state_dict(),
@@ -127,6 +141,7 @@ def train():
                        out_dir + "training_state.pt")
         with open(out_dir + "results.txt", "w") as file:
             file.write(results)
+
         wandb.finish()
         print("Training finished")
 
@@ -146,7 +161,7 @@ def predict():
         y_pred = []
         y_true = []
 
-        path = "output\\" + config["name"] + "\\model.pth"
+        path = "outputs\\20240116172755\\YoloLSTM\\model.pth"
         model = model.to(device)
         model = model.eval()
         model.load_state_dict(torch.load(path))
@@ -193,5 +208,5 @@ def show_img(img):
 
 
 if __name__ == "__main__":
-    # train()
-    predict()
+    train()
+    # predict()
