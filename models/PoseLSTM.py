@@ -49,7 +49,7 @@ class Regression(nn.Module):
             self.regress_fc_pose = nn.Sequential(nn.Linear(2048, 1024), nn.ReLU())
             self.lstm4dir = FourDirectionalLSTM(seq_size=32, origin_feat_size=1024, hidden_size=256)
             self.regress_lstm4d = nn.Sequential(self.lstm4dir, nn.Dropout(0.7))
-            self.regress_fc_xy = nn.Linear(1024, 2)
+            self.regress_fc_xy = nn.Linear(1024, 6)
         else:
             self.projection = nn.AvgPool2d(kernel_size=7, stride=1)
             self.regress_fc_pose = nn.Sequential(nn.Linear(1024, 2048), nn.ReLU())
