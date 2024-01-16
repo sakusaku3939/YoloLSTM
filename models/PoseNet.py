@@ -52,13 +52,13 @@ class Regression(nn.Module):
             self.regress_fc_pose = nn.Sequential(nn.Linear(2048, 1024),
                                                  nn.ReLU(),
                                                  nn.Dropout(0.7))
-            self.regress_fc_xy = nn.Linear(1024, 6)
+            self.regress_fc_xy = nn.Linear(1024, 2)
         else:
             self.projection = nn.AvgPool2d(kernel_size=7, stride=1)
             self.regress_fc_pose = nn.Sequential(nn.Linear(1024, 2048),
                                                  nn.ReLU(),
                                                  nn.Dropout(0.5))
-            self.regress_fc_xy = nn.Linear(2048, 6)
+            self.regress_fc_xy = nn.Linear(2048, 2)
 
     def forward(self, x):
         x = self.projection(x)
