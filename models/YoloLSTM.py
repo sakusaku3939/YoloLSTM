@@ -16,7 +16,7 @@ class YoloLSTM(nn.Module):
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2)
         )
-        self.lstm = nn.LSTM(input_size=8192, hidden_size=3072, num_layers=1, batch_first=True)
+        self.lstm = nn.LSTM(input_size=8192, hidden_size=3072, num_layers=1, batch_first=True, bidirectional=True)
         self.fc = nn.Linear(3072, 2)
 
     def forward(self, crops_in):
