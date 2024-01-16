@@ -161,7 +161,7 @@ def predict():
         y_pred = []
         y_true = []
 
-        path = "outputs\\20240116172755\\YoloLSTM\\model.pth"
+        path = "outputs\\20240116184423\\PoseNet\\model.pth"
         model = model.to(device)
         model = model.eval()
         model.load_state_dict(torch.load(path))
@@ -186,12 +186,12 @@ def predict():
                     y_true.append(label.item())
 
                 # 分類に失敗した画像を表示する
-                if (pred == labels).sum().item() != labels.size(0):
-                    for i in range(len(labels)):
-                        if pred[i] != labels[i]:
-                            images, labels = data
-                            # show_img(torchvision.utils.make_grid(images[i]))
-                            print(f'Predicted: {classes[pred[i]]}, Label: {classes[labels[i]]}')
+                # if (pred == labels).sum().item() != labels.size(0):
+                #     for i in range(len(labels)):
+                #         if pred[i] != labels[i]:
+                #             images, labels = data
+                #             show_img(torchvision.utils.make_grid(images[i]))
+                #             print(f'Predicted: {classes[pred[i]]}, Label: {classes[labels[i]]}')
 
         show_confusion_matrix(y_pred, y_true, classes, config["name"])
         print()
