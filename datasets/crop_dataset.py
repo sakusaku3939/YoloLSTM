@@ -31,6 +31,10 @@ class CropDataset(Dataset):
 
                 # ディレクトリ配下にあるクロップ画像のパスを取得
                 for current_dir, sub_dirs, files_list in os.walk(f"{c_path}/{d_name}"):
+                    # 現在のディレクトリ名を取得
+                    dir_name = os.path.basename(current_dir)
+                    if dir_name == "bench":
+                        print(files_list)
                     for f_name in files_list:
                         file_paths.append(os.path.join(current_dir, f_name))
 

@@ -15,8 +15,8 @@ c = {
         "checkpoint_resume": False,
     },
     "wandb": {
-        "state": False,
-        "project": "ImageBasedLocalization_Regress",
+        "state": True,
+        "project": "ImageBasedLocalization_Classify",
         "config": {}
     },
     "models": {
@@ -32,7 +32,7 @@ c = {
             "param": {},
         },
         "PoseLSTM": {
-            "state": False,
+            "state": True,
             "name": "PoseLSTM",
             "train_settings": {
                 "data_loader_function": (load_image, load_test_image),
@@ -43,7 +43,7 @@ c = {
             "param": {},
         },
         "PoseNet": {
-            "state": False,
+            "state": True,
             "name": "PoseNet",
             "train_settings": {
                 "data_loader_function": (load_image, load_test_image),
@@ -54,7 +54,7 @@ c = {
             "param": {},
         },
         "SimpleCNN": {
-            "state": False,
+            "state": True,
             "name": "SimpleCNN",
             "train_settings": {
                 "data_loader_function": (load_image, load_test_image),
