@@ -163,11 +163,11 @@ def predict():
     num_workers = config_gen["num_workers"]
     device = init_device(config_gen)
 
-    path = "outputs\\20240114220707\\YoloLSTM\\model.pth"
-
     for model, config in get_models():
         model = model.to(device)
         model = model.eval()
+
+        path = f"outputs\\20240117011542\\{config['name']}\\best_model.pth"
         model.load_state_dict(torch.load(path))
 
         train_settings = config["train_settings"]
