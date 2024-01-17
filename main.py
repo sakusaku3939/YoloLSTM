@@ -9,6 +9,7 @@ import wandb
 import random
 import numpy as np
 import ssl
+import copy
 
 from helper.model_utils import get_models
 from config import get_config
@@ -123,10 +124,10 @@ def train():
             save_epoch, save_loss = epoch, running_loss
 
             # 最高パフォーマンスの更新
-            if running_score >= best_score:
+            if epoch >= 8 and running_score >= best_score:
                 best_score = running_score
                 best_accuracy = accuracy_result
-                best_model_state = model.state_dict().copy()
+                best_model_state = copy.deepcopy(model.state_dict())
 
             result = f"Loss: {epoch_loss}  Score: {running_score}\n"
             results += ("Epoch:" + str(epoch) + "  " + f"Loss: {epoch_loss}  Score: {running_score}\n")
@@ -160,11 +161,11 @@ def predict():
     num_workers = config_gen["num_workers"]
     device = init_device(config_gen)
 
-    path = "outputs\\20230815140542\\YoloLSTM\\model.pth"
-
     for model, config in get_models():
         model = model.to(device)
         model = model.eval()
+
+        path = f"outputs\\20240117011542\\{config['name']}\\best_model.pth"
         model.load_state_dict(torch.load(path))
 
         train_settings = config["train_settings"]
@@ -180,7 +181,9 @@ def predict():
             running_loss = 0.0
 
             for j, data in tqdm(enumerate(test_loader, 0)):
-                inputs, target = [d.to(device) for d in data[0]], data[1].to(device)
+                inputs = [d.to(device) for d in data[0]] if type(data[0]) is list else data[0].to(device)
+                target = data[1].to(device)
+
                 pred = model(inputs)
                 loss = loss_function(pred, target)
                 running_loss += loss.item()
