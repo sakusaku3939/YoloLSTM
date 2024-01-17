@@ -82,8 +82,11 @@ def yolo(input_path, output_path, name):
 
 
 def collate_fn(batch_list):
-    images_list = [data[0] for data in batch_list]
-    label_list = [data[1] for data in batch_list]
+    # バッチリストから空でない要素だけを選択
+    filtered_batch_list = [data for data in batch_list if data[0] and data[1]]
+
+    images_list = [data[0] for data in filtered_batch_list]
+    label_list = [data[1] for data in filtered_batch_list]
 
     # batchリストを1つのTensorにまとめる
     images = [torch.stack(batch) for batch in images_list]
