@@ -1,6 +1,7 @@
 import concurrent.futures
 import glob
 import os
+import re
 import itertools
 
 import torch
@@ -11,7 +12,7 @@ from ultralytics import YOLO
 
 
 class CropDataset(Dataset):
-    def __init__(self, root, transform, num_workers) -> None:
+    def __init__(self, root, transform, num_workers):
         super().__init__()
 
         # 初回実行の場合は、画像をYOLOでクロップする
@@ -37,13 +38,15 @@ class CropDataset(Dataset):
 
                     for f_name in files_list:
                         file_paths.append(os.path.join(current_dir, f_name))
-                self.dataset.append({"label": i, "file_paths": file_paths})
+
+                position = [float(p) for p in re.findall(r'\d+', c_path)]
+                self.dataset.append({"xy": position, "paths": file_paths})
 
         self.root = root
         self.transform = transform
 
     def __getitem__(self, index):
-        file_paths = self.dataset[index]["file_paths"]
+        file_paths = self.dataset[index]["paths"]
         images = []
 
         for f_path in file_paths:
@@ -55,8 +58,8 @@ class CropDataset(Dataset):
 
             images.append(img)
 
-        label = self.dataset[index]["label"]
-        return images, label
+        xy = self.dataset[index]["xy"]
+        return images, xy
 
     def __len__(self):
         return len(self.dataset)
