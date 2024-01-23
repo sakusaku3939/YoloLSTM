@@ -1,4 +1,7 @@
 # Image-Localization-Model
+``
+pip install torch==2.0.1+cu117 torchvision==0.15.2+cu117 --extra-index-url https://download.pytorch.org/whl/cu117
+``
 ```
 @software{yolov8_ultralytics,
   author = {Glenn Jocher and Ayush Chaurasia and Jing Qiu},
