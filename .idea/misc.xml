@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Black">
-    <option name="sdkName" value="Python 3.11 (Image-Localization-Model)" />
+    <option name="sdkName" value="Python 3.11 (YoloLSTM)" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.11 (Image-Localization-Model)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.11 (YoloLSTM)" project-jdk-type="Python SDK" />
 </project>
