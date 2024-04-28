@@ -7,7 +7,7 @@ from models.base.GoogLeNet import calc_loss
 
 c = {
     "general": {
-        "num_epochs": 10,
+        "num_epochs": 30,
         "random_state": 111,
         "batch_size": 5,
         "num_workers": 2,

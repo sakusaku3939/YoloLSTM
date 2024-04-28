@@ -197,9 +197,11 @@ def predict():
             target_list = torch.cat(target_list)
             running_score = config["train_settings"]["eval_function"](pred_list, target_list)
             mean_error = mae_function(pred_list, target_list)
+            std = torch.std(pred_list - target_list)
 
             print(f"Loss: {running_loss / (j + 1)}  Score: {running_score}\n")
             print(f"Accuracy: {tile_width * mean_error}m")
+            print(f"Standard deviations: {std}")
 
 
 # 画像の表示関数
