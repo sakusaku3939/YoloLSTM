@@ -1,4 +1,5 @@
 # Image-Localization-Model
+Python 3.11  
 ``
 pip install torch==2.0.1+cu117 torchvision==0.15.2+cu117 --extra-index-url https://download.pytorch.org/whl/cu117
 ``
