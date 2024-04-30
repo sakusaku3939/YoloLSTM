@@ -1,16 +1,28 @@
-# Image-Localization-Model
-Python 3.11  
-``
+# YoloLSTM: Image-based Localization model
+"Demo: Image-based Indoor Localization using Object Detection and LSTM"  
+
+### Setup
+- Python 3.11
+
+- Torch 2.0.1+, Torchvision 0.15.2+ and CUDA 11.7+
+```
 pip install torch==2.0.1+cu117 torchvision==0.15.2+cu117 --extra-index-url https://download.pytorch.org/whl/cu117
-``
 ```
-@software{yolov8_ultralytics,
-  author = {Glenn Jocher and Ayush Chaurasia and Jing Qiu},
-  title = {Ultralytics YOLOv8},
-  version = {8.0.0},
-  year = {2023},
-  url = {https://github.com/ultralytics/ultralytics},
-  orcid = {0000-0001-5950-6979, 0000-0002-7603-6750, 0000-0003-3783-7069},
-  license = {AGPL-3.0}
-}
+
+- Installing Packages
 ```
+pip install -r requirements.txt
+```
+<br>
+
+Change branch to `i208_regression`. The `master` branch cannot be used.
+```
+git checkout i208_regression
+```
+
+### Evaluation
+You can compare with other models by setting `state` in `config.py` to True/False.
+- `PoseNet`: Implementation of [PoseNet: A Convolutional Network for Real-Time 6-DOF Camera Relocalization](https://www.cv-foundation.org/openaccess/content_iccv_2015/html/Kendall_PoseNet_A_Convolutional_ICCV_2015_paper.html) [Kendall2015ICCV]
+- `PoseLSTM`: Implementation of [Image-Based Localization Using LSTMs for Structured Feature Correlation](https://openaccess.thecvf.com/content_iccv_2017/html/Walch_Image-Based_Localization_Using_ICCV_2017_paper.html) [Walch2017ICCV]
+- `SimpleCNN`: CNN with the same number of layers as YoloLSTM using the whole image as input
+
