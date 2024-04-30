@@ -34,7 +34,7 @@ python main.py
 ```
 
 ### Evaluation
-You can compare with other models by setting `state` in `config.py` to True/False.
+You can compare with other models by setting `models/<model_name>/state` in `config.py` to True/False.
 - `PoseNet`: Implementation of [PoseNet: A Convolutional Network for Real-Time 6-DOF Camera Relocalization](https://www.cv-foundation.org/openaccess/content_iccv_2015/html/Kendall_PoseNet_A_Convolutional_ICCV_2015_paper.html) [Kendall2015ICCV]
 - `PoseLSTM`: Implementation of [Image-Based Localization Using LSTMs for Structured Feature Correlation](https://openaccess.thecvf.com/content_iccv_2017/html/Walch_Image-Based_Localization_Using_ICCV_2017_paper.html) [Walch2017ICCV]
 - `SimpleCNN`: CNN with the same number of layers as YoloLSTM using the whole image as input
