@@ -15,9 +15,22 @@ pip install -r requirements.txt
 ```
 <br>
 
-Change branch to `i208_regression`. The `master` branch cannot be used.
+- Change branch to `i208_regression`. The `master` branch cannot be used.
 ```
 git checkout i208_regression
+```
+
+- Place the [i208 laboratory dataset](https://www.dropbox.com/scl/fo/1dx4lj088k04iglkcszpm/ABEHgkJfKdooGy2AsX0mMgU?rlkey=i1mjuag211gde0w9s9m52m50j&st=j9v2p39p&dl=0) in the root `data_all/train`, `data_all/valid` and `data_all/test`.
+```
+data_all/
+├── train/
+├── valid/
+└── test/
+```
+
+- Start learning with the following command.
+```
+python main.py
 ```
 
 ### Evaluation
