@@ -1,5 +1,7 @@
 # YoloLSTM: Image-based Localization model
-"Demo: Image-based Indoor Localization using Object Detection and LSTM"  
+**["Demo: Image-based Indoor Localization using Object Detection and LSTM"](https://doi.org/10.1145/3643832.3661836)** (MobiSys 2024 Poster/Demo)
+
+![system-overview](https://github.com/sakusaku3939/YoloLSTM/assets/53967490/9ffc2dfd-4f73-4557-bc79-a98a9e653bd6)
 
 ## Setup
 - Python 3.11
