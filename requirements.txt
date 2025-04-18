@@ -4,7 +4,7 @@ opencv_python==4.8.1.78
 Pillow==10.3.0
 scikit_learn==1.5.0
 seaborn==0.13.0
-torch==2.2.0
+torch==2.6.0
 torchvision==0.15.2+cu117
 tqdm==4.66.3
 ultralytics==8.0.222
